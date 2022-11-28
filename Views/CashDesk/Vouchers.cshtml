@@ -1,0 +1,567 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Helpers; 
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "Vouchers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="~/css/Vouchers.css">
+
+<div class="addclient" id="addclient" style=" width: 25%;margin: 0 auto;">
+    <div class="checkpersonalid" style="display:flex; flex-direction:column">
+        <label>@SharedLocalizer["PersonalNumber"]</label>
+        <input id="personalid" value="" />
+        <button style="margin-top:10px" id="checkpersonalid">@SharedLocalizer["Check"]</button>
+    </div>
+    <div class="personotherdata" id="personotherdata" style="display:none; flex-direction:column">
+        <label style="margin-top:10px">@SharedLocalizer["Name"]</label>
+        <input id="name" />
+        <label style="margin-top:10px">@SharedLocalizer["Surname"]</label>
+        <input id="surname" />
+        <label style="margin-top:10px">@SharedLocalizer["PhoneNumber"]</label>
+        <input type="number" id="phone" />
+        <label style="margin-top:10px">@SharedLocalizer["DatOfBirth"]</label>
+        <input type="date" id="birthdate" />
+        <button style="margin-top:10px" id="addperson">@SharedLocalizer["Add"]</button>
+    </div>
+</div>
+<div style="display:none" id="addvoucher" class="addvoucher">
+    <div class="vouchers">
+        <div class="payment">
+            <div style="width:55%">
+                <div class="buyvoucher">
+                    <label>@SharedLocalizer["Quantity"]</label>
+                    <input type="number" onkeyup="voucherscounter(this)" id="countvouchers" />
+                </div>
+                <div class="buyvoucher">
+                    <label>@SharedLocalizer["CashAmount"]</label>
+                    <input type="number" onkeyup="amountcounter(this)" id="cashamount" />
+                </div>
+                <div class="buyvoucher">
+                    <label>@SharedLocalizer["Cashless"]</label>
+                    <input type="number" onkeyup="amountcounter(this)" id="terminalamount" />
+                </div>
+                <div class="buyvoucher">
+                    <label>@SharedLocalizer["BankTransfer"]</label>
+                    <input type="number" onkeyup="amountcounter(this)" id="bankamount" />
+                </div>
+                <div class="buyvoucher">
+                    <div>
+                        <label>@SharedLocalizer["TotalAmount"]</label>
+                        <label id="sumamount">0</label>
+                        <label>/</label>
+                        <input style="width: 50px;  border: none; background: none;" readonly id="currentamount" value="0" />
+                    </div>
+                </div>
+                <div class="buyvoucher">
+                    <div>
+                        <label>@SharedLocalizer["Quantity"]</label>
+                        <label id="sumcount">0</label>
+                        <label>/</label>
+                        <label id="currentcount">0</label>
+                    </div>
+                </div>
+            </div> 
+        </div> 
+        <div>
+            <div class="scancards">
+                <label>@SharedLocalizer["VoucherCode"]</label>
+                <div class="card-inputs" id="newcard" style="width: 400px">
+                    <div style="display: grid; grid-template-columns: 20px auto 50px 50px">
+                        <label id="1">1</label>
+                        <input onkeyup="scanqr(this)" id="card1" style="width: 100%" />
+                        <input readonly id="amount1" />
+                        <input hidden readonly id="usdt1" />
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+    <div style="float:left; margin-left:10%">
+        <button style="float: right;" id=openpaymentdetails>@SharedLocalizer["Approve"]</button>
+    </div>
+
+    <input hidden id="readercount" value="1" />
+
+
+
+
+</div>
+<div class="overlay" id="overlay">
+    <div id="messagebox" class="messagebox" onclick="document.getElementById('overlay').style.display='none'; document.getElementById('messagebox').style.display='none'">
+    </div>
+</div>
+
+<div data-backdrop="static" class="modal fade" id="paymentdetailsmodal" tabindex="-1" role="dialog" aria-labelledby="paymentdetailsmodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex; flex-direction:column">
+                    <div style="display:flex; flex-direction:row; width:100%">
+                        <div style="width:100%">
+                            <button id="closeord" data-dismiss="modal" aria-label="Close" style="float:right" aria-hidden="true">X</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body" style="display:flex; flex-direction:column">
+
+                    <input style="width:60%;" readonly id="clientname" value="clientname" />
+                    <input style="width:60%;" readonly id="clientsurname" value="clientsurname" />
+                    <input style="width:60%;" readonly id="clientpersonalid" value="clientpersonalid" />
+                    <input style="width:60%;" readonly id="clientphone" value="clientphone" />
+                    <input style="width:60%;" readonly id="clientbdate" value="clientbdate" />
+                    <input style="width:60%;" readonly id="SumCards1" value="SumCards1" />
+                    <input style="width: 60%; margin-top:5px" readonly id="sum" value="sum" />
+                    <input style="width: 60%; margin-top: 5px" readonly id="cash" value="cash" />
+                    <input style="width: 60%; margin-top: 5px" readonly id="terminal" value="terminal" />
+                    <input style="width: 60%; margin-top: 5px" readonly id="bank" value="bank" />
+
+
+                    <div class="modal-footer" style="width:100%; margin-top:10px">
+                        <button id=confirm>@SharedLocalizer["Confirm"]</button>
+                        <button style="width:100px; text-align:center" class="btn hide" id="pendingconfirm">...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input hidden value="@SharedLocalizer["TotalAmountIncorrect"]" id="totalamountincorrect"/>
+<input hidden value="@SharedLocalizer["PleaseFillQuantity"]" id="pleasefillquantity"/>
+<input hidden value="@SharedLocalizer["PleaseFillCode"]" id="pleasefillcode" />
+<input hidden value="@SharedLocalizer["PleaseFillFields"]" id="pleasefillfilds" />
+<input hidden value="@SharedLocalizer["VouchersCountIncorrect"]" id="voucherscountincorrect" />
+<input hidden value="@SharedLocalizer["Name"]" id="namecult" />
+<input hidden value="@SharedLocalizer["Surname"]" id="surnamecult" />
+<input hidden value="@SharedLocalizer["PersonalNumber"]" id="personidcult" />
+<input hidden value="@SharedLocalizer["DatOfBirth"]" id="dobcult" />
+<input hidden value="@SharedLocalizer["PhoneNumber"]" id="phonecult" />
+<input hidden value="@SharedLocalizer["Quantity"]" id="quantitycult" />
+<input hidden value="@SharedLocalizer["CashAmount"]" id="cashcult" />
+<input hidden value="@SharedLocalizer["Cashless"]" id="cashlesscult" />
+<input hidden value="@SharedLocalizer["BankTransfer"]" id="bankcult" />
+<input hidden value="@SharedLocalizer["TotalAmount"]" id="sumcult" />
+<input hidden value="@SharedLocalizer["VoucherUsed"]" id="voucherused" />
+<input hidden value="@SharedLocalizer["LanguageIncorrect"]" id="langualeincorrect" />
+
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+
+    $("#confirm").click(function () {
+        $('#pendingconfirm').removeClass('hide');
+        $('#confirm').addClass('hide');
+        //$('#addcard1').addClass('hide');
+        //$('#perdingaddcard1').removeClass('hide');
+
+        var cardArray = [];
+        var SumCards = $('#readercount').val()
+        var cashamount = $('#cashamount').val()
+        var terminalamount = $('#terminalamount').val()
+        var bankamount = $('#bankamount').val()
+
+        var arraylen = Number($('#readercount').val())
+      
+
+
+        for (var i = 1; i <= arraylen; i++) {
+            let code = $('#card' + i).val()
+            cardArray.push({ "VoucherCode": code });
+        }
+        /*  console.log(cardArray);*/ //second console output
+        setTimeout(() => {
+            var url = '@Url.Action("MakeOperation", "CashDesk")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                async: false,
+
+                data: {
+
+                    "vouchers": cardArray,
+                    "CardCount": SumCards,
+                    "TerminalAmount": terminalamount,
+                    "BankAmount": bankamount,
+                    "CashAmount": cashamount,
+                    "Name": $('#name').val(),
+                    "Surname": $('#surname').val(),
+                    "PersonalID": $('#personalid').val(),
+                    "Phone": $('#phone').val(),
+                    "BirthDate": $('#birthdate').val(),
+                },
+                cache: false,
+                success: function (data) {
+                    $('#pendingconfirm').addClass('hide');
+                    $('#confirm').removeClass('hide');
+                    console.log(data)
+                    $('#paymentdetailsmodal').modal('hide')
+                    if (data.actionResultCode == 200) {
+
+                        window.location.href = '/CashDesk/GetPaymentDetails?PaymentID=' + data.paymentID;
+
+                    }
+                    else {
+                        document.getElementById('messagebox').innerHTML = data.actionResultMsg;
+                        document.getElementById('messagebox').style.display = 'block';
+                        document.getElementById('overlay').style.display = 'block';
+
+
+
+
+                    }
+                },
+                //error: function () {
+                //    $("#mesageboxb").html("დაფიქსირდა შეცდომა")
+                //}
+
+            });
+        }, 500)
+    })
+
+    $("#openpaymentdetails").click(function () {
+        
+      
+
+        var SumCards = $('#readercount').val()
+        var c = $('#cashamount').val() == '' ? 0 : $('#cashamount').val()
+        var t = $('#terminalamount').val() == '' ? 0 : $('#terminalamount').val()
+        var b = $('#bankamount').val() == '' ? 0 : $('#bankamount').val()
+        var name = $('#name').val()
+        var PersonalID = $('#personalid').val()
+        var Surname = $('#surname').val()
+        var Phone = $('#phone').val()
+        var bdate = $('#birthdate').val()
+
+        var sumamount = Number(c) + Number(t) + Number(b)
+
+        if (sumamount != $('#currentamount').val()) {
+            document.getElementById('messagebox').innerHTML = $('#totalamountincorrect').val(); 
+            document.getElementById('messagebox').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('messagebox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 1000)
+          
+        }
+        else if ($('#card1').val() == '' || $('#card1').val() == null) {
+            document.getElementById('messagebox').innerHTML = $('#pleasefillcode').val();  
+            document.getElementById('messagebox').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('messagebox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 1000)
+        }
+        else if ($('#countvouchers').val() != $('#currentcount').text()) {
+            document.getElementById('messagebox').innerHTML =  $('#voucherscountincorrect').val();
+            document.getElementById('messagebox').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('messagebox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 1000)
+          
+        } 
+        else {
+        $('#paymentdetailsmodal').modal('show')
+        $('#clientname').val($("#namecult").val() +": "+ name)
+          $('#clientsurname').val($("#surnamecult").val() + ": " + Surname)
+         $('#clientpersonalid').val($("#personidcult").val() +": "+ PersonalID)
+        $('#clientbdate').val($("#dobcult").val() +": "+ bdate)
+        $('#clientphone').val($("#phonecult").val() +": "+ Phone)
+        $('#SumCards1').val($("#quantitycult").val() +": "+ SumCards)
+        $('#cash').val($("#cashcult").val() +": "+ '₾')
+        $('#terminal').val($("#cashlesscult").val() +": "+ t + '₾')
+        $('#bank').val($("#bankcult").val() +": "+ b + '₾')
+
+        $('#sum').val($("#sumcult").val() +": "+ sumamount + '₾')
+         }
+    })
+
+    $("#addperson").click(function () {
+        if ($("#name").val() == '' || $("#birthdate").val() == '' || $("#phone").val() == '' || $("#surname").val() == '' || $("#personalid").val() == '') {
+            document.getElementById('messagebox').innerHTML =  $("#pleasefillfilds").val();
+            document.getElementById('messagebox').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('messagebox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 1000)
+        }
+        else {
+            document.getElementById('addvoucher').style.display = 'block';
+            document.getElementById('addclient').style.display = 'none';
+
+        }
+    });
+    $("#checkpersonalid").click(function () {
+
+        var url = '@Url.Action("CheckPerson", "CashDesk")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            data: {
+                "PersonalID": $("#personalid").val(),
+            },
+            cache: false,
+            success: function (data) {
+                document.getElementById('personotherdata').style.display = 'flex';
+                console.log(data)
+                if (data.actionResultCode == 200) {
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('surname').value = data.surname;
+                    document.getElementById('phone').value = data.phone;
+                    document.getElementById('birthdate').value = data.birthDate;
+                }
+                else {
+                    document.getElementById('name').value = '';
+                    document.getElementById('surname').value = ''
+                    document.getElementById('birthdate').value = '';
+                    document.getElementById('phone').value = '';
+                }
+            },
+            error: function () {
+                alert('Error');
+            },
+        });
+
+    });
+
+    var timerobj = null;
+    function scanqr(e) {
+
+        var key = window.event.keyCode || window.event.charCode;
+
+        if (key != 32 && key != 46 && key != 8 && key != 13 && key != 16 && key != 36 && key != 18 && key != 20 && key != 91 && key != 91 && key != 93 && key != 32 && key != 33 && key != 34 && key != 35 && key != 37 && key != 38 && key != 39 && key != 40 && key != 44 && key != 145 && key != 19 && key != 46 && key != 144 && key != 45) {
+
+            if (timerobj) {
+                clearTimeout(timerobj);
+            }
+            timerobj = setTimeout(() => {
+                scanqrcode(e);
+            }, 500);
+        }
+
+    }
+    function scanqrcode(e) {
+        var r = e.value
+        var count = Number($("#countvouchers").val());
+        var currentlyreaded = Number($("#readercount").val());
+
+        for (let i = 1; i < currentlyreaded; i++) {
+            var a = document.getElementById('card' + i).value
+            if (r == a) {
+                document.getElementById('messagebox').innerHTML =  $("#voucherused").val();
+                document.getElementById('messagebox').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById(e.id).value = '';
+                document.getElementById(e.id).focus();
+                setTimeout(() => {
+                    document.getElementById('messagebox').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                }, 1000)
+
+                return false
+            }
+        }
+
+
+        const specialChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=_+[];'{}./<>?";
+        for (const s of r) {
+            if (!specialChars.includes(s)) {
+                document.getElementById('messagebox').innerHTML = $("#langualeincorrect").val();  
+                document.getElementById('messagebox').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById(e.id).value = '';
+                setTimeout(() => {
+                    document.getElementById('messagebox').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                }, 1000)
+                return false
+            }
+        }
+
+        if (count == null || count == '') {
+            document.getElementById('messagebox').innerHTML =$("#pleasefillquantity").val();  
+            document.getElementById('messagebox').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('countvouchers').style.borderColor = 'red';
+            document.getElementById('card1').value = '';
+            setTimeout(() => {
+                document.getElementById('messagebox').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }, 1000)
+        }
+
+        else {
+
+            var url = '@Url.Action("CheckVoucher", "CashDesk")';
+            $.ajax({
+                type: "GET",
+                url: url,
+                async: false,
+                data: {
+                    "voucherCode": e.value,
+                },
+                cache: false,
+                success: function (data) {
+                    console.log(data);
+                    if (data.actionResultCode != 200) {
+                        document.getElementById('messagebox').innerHTML = data.actionResultMsg;
+                        document.getElementById('messagebox').style.display = 'block';
+                        document.getElementById('overlay').style.display = 'block';
+                        document.getElementById(e.id).value = '';
+                        setTimeout(() => {
+                            document.getElementById('messagebox').style.display = 'none';
+                            document.getElementById('overlay').style.display = 'none';
+                        }, 1500)
+                    }
+                    else {
+                         
+                        var moneysum = document.getElementById('currentamount').value
+
+                        var moneysum = Number($("#currentamount").val());
+                        var a = Number(data.amount);
+                        $("#currentamount").val(moneysum + a);
+                        var counter = parseFloat(currentlyreaded)
+                        document.getElementById('amount' + counter).value = data.amount;
+                        //document.getElementById('usdt' + counter).value = data.amount;
+                        $("#currentcount").text(counter);
+                        if (count > currentlyreaded) {
+                            var new_no = parseFloat(currentlyreaded) + 1;
+                            $("#readercount").val(new_no);
+
+                            var newcardinput = '';
+                            var newcardlabel = '';
+
+                            var newElement = `<div id=div` + new_no + ` style="display: grid; grid-template-columns: 20px auto 50px 50px">
+                                                                            <label id=` + new_no + ` > ` + new_no + ` </label>
+                                                                        <input onkeyup = "scanqr(this)"  id = "card` + new_no + `"  style="width: 100%"/>
+                                                                                <input id="amount`+ new_no + `"/>
+                                                                                <input hidden id="usdt`+ new_no + `"/>
+
+                                                    </div>
+                                                            `
+
+                            $('#newcard').append(newElement);
+                            document.getElementById('card' + new_no).focus();
+
+                        }
+                    }
+                },
+
+                error: function () {
+                    document.getElementById('messagebox').innerHTML = "error";
+                    document.getElementById('messagebox').style.display = 'block';
+                    document.getElementById('overlay').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('messagebox').style.display = 'none';
+                        document.getElementById('overlay').style.display = 'none';
+                    }, 1500)
+
+                }
+
+            });
+
+
+        }
+
+    }
+      var timerobj = null;
+    function voucherscounter(e) {
+
+        var key = window.event.keyCode || window.event.charCode; 
+        if ((key >= 48 && key <= 57) || (key >= 96 && key <= 105)) {
+            if (timerobj) {
+                clearTimeout(timerobj);
+            }
+            timerobj = setTimeout(() => {
+                voucherscount(e);
+            }, 500);
+        }
+
+    }
+    function voucherscount(e) { 
+        $("#sumcount").text(e.value);
+        document.getElementById('countvouchers').style.borderColor = 'black';
+        var totalcount = Number($("#countvouchers").val());
+        var currentcount = Number($("#readercount").val());
+        var card1 = Number($("#card1").val()); 
+        var lastcard = document.getElementById('card' + currentcount).value;
+    
+        if (lastcard !='' && ((totalcount > currentcount && currentcount > 1) || (card1 != ''  && totalcount > currentcount))) {
+            var new_no = parseFloat(currentcount) + 1;
+            $('#readercount').val(parseFloat(new_no))
+            // var newcardinput = '<input onkeyup="scanqr(this)"  id="card' + new_no + '" /><br>';
+            //var newcardlabel = '<label>' + new_no + '</label>';
+
+            // $('#newcard').append(newcardlabel);
+            // $('#newcard').append(newcardinput);
+            var newElement = `<div id=div` + new_no + ` style="display: grid; grid-template-columns: 20px auto 50px 50px">
+                                                                            <label id=` + new_no + ` > ` + new_no + ` </label>
+                                                                        <input onkeyup = "scanqr(this)"  id = "card` + new_no + `"  style="width: 100%"/>
+                                                                            <input id="amount`+ new_no + `"/>
+                                                                            <input hidden id="usdt`+ new_no + `"/>
+                                                    </div>
+                                                            `
+            //       <input style="width:50px" id="amount`+ new_no  + `"/>
+
+            $('#newcard').append(newElement);
+            document.getElementById('card' + new_no).focus();
+        }
+        else if (totalcount < currentcount && currentcount > 1) {
+            for (let i = currentcount; i > totalcount; i--) {
+                if (i == 1) {
+                    return false
+                }
+                // document.getElementById('card' + i).remove();
+                $("#currentcount").text(totalcount);
+                $("#readercount").val(totalcount);
+                var moneysum = Number($("#currentamount").val());
+                var a = $('#amount' + i).val()
+                $("#currentamount").val(moneysum - a);
+                console.log(a);
+                document.getElementById('div' + i).remove();
+
+
+            }
+        }
+        
+    }
+
+    function amountcounter(e) {
+        var key = event.keyCode || event.charCode;
+        if (((key >= 96 && key <= 105) || (key >= 48 && key <= 57)) || key == 8 || key == 46) {
+            var c = $('#cashamount').val() != "" ? $('#cashamount').val() : 0;
+            var t = $('#terminalamount').val() != "" ? $('#terminalamount').val() : 0;
+            var b = $('#bankamount').val() != "" ? $('#bankamount').val() : 0;
+
+
+            var sum = parseFloat(c) + parseFloat(t) + parseFloat(b);
+            $('#sumamount').text(parseFloat(sum))
+            var currentmoney = parseInt($("#currentamount").val());
+
+            //if (currentmoney == sumsum) {
+            //    document.getElementById('sumamount').style.color = 'green'
+            //    document.getElementById('currentamount').style.color = 'green'
+            //}
+            //else {
+            //    document.getElementById('sumamount').style.color = 'red'
+            //    document.getElementById('currentamount').style.color = 'red'
+            //}
+        }
+    }
+
+</script>
+
+

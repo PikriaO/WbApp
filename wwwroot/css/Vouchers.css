@@ -1,0 +1,50 @@
+﻿.buyvoucher {
+    display: flex;
+    flex-direction: column
+}
+ 
+.payment {
+    width: 25%;
+    margin-left:20px;
+}
+.vouchers{
+    width:100%;
+    display:flex;
+    flex-direction:row
+}
+.scancards {
+    display: flex;
+    flex-direction: column
+}
+.messagebox {
+    display:none;
+    cursor: pointer;
+    position: fixed;
+    width: 400px;
+    height: 180px;
+    background: rgb(255 255 255);
+    top: calc(50% - 200px);
+    left: calc(50% - 200px);
+    font-size: 20px; 
+    border-radius: 10px;
+    text-align: center;
+    padding: 50px;
+    color: red;
+}
+.overlay {
+    position: fixed; /* Positioning and size */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(128,128,128,0.5); /* color */
+    display: none; /* making it hidden by default */
+}
+
+.card-inputs {
+  width: 370px
+}
+
+.card-inputs input {
+    width: 100%
+}

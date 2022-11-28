@@ -1,0 +1,75 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@inject IJsonHelper Json;
+@{
+    ViewData["Title"] = "QRVouchersBackSideWhite";
+}
+@model List<PdfData>
+
+
+<table style="border-collapse: unset;   border: 0px;  ">
+
+
+    @for (int i = 0; i < Math.Ceiling((Convert.ToDecimal(Model.Count) / 4)); i++)
+    {
+
+        <tr style="border-collapse: unset; border: 0px;   margin:0px; padding: 0px">
+
+
+            @for (int j = (i * 4) + 3; j >= (i * 4); j--)
+            {
+
+                if (j < Model.Count())
+                {
+                    if ((Convert.ToDecimal(j + 1) % 4) == 0)
+                    {
+                        <td>
+                            <div style="width:310px;">
+                            </div>
+                        </td>
+                    }
+
+
+                    <td style="border: 0px solid;   margin:0px; padding: 0px;  width:450px; height:245px; background-image: url(@Model[j].ImgUrl/img/card2.png); background-repeat: no-repeat; background-size:cover" border="0">
+
+                        @if (@Model[j].Usdt == 1 || @Model[j].Usdt == 100 || @Model[j].Usdt == 10)
+                        {
+                            <img style="width: 58.5px; height:85px; margin-top: 20px; margin-left: 25px;" src=@Model[j].ImgUrl/img/1.png />
+                        }
+                        @if (@Model[j].Usdt == 5 || @Model[j].Usdt == 50)
+                        {
+                            <img style="width:79px; height:90px; margin-top: 20px; margin-left: 25px;" src=@Model[j].ImgUrl/img/5.png />
+                        }
+                        @if (@Model[j].Usdt == 10 || @Model[j].Usdt == 100 || @Model[j].Usdt == 50)
+                        {
+                            <img style="width: 75px; height:90px; margin-top: 20px; margin-left: -10px;" src=@Model[j].ImgUrl/img/0-1.png />
+                        }
+                        @if (@Model[j].Usdt == 100)
+                        {
+                            <img style="width: 75px; height:90px; margin-top: 20px; margin-left: -10px;" src=@Model[j].ImgUrl/img/0-2.png />
+                        }
+                    </td>
+                }
+                else
+                {
+                    if ((Convert.ToDecimal(j + 1) % 4) == 0)
+                    {
+                        <td>
+                        </td>
+                    }
+                    <td></td>
+                }
+            }
+
+        </tr>
+        @if ((i + 1) % 5 == 0)
+        {
+            <tr style="height:117px">
+                <td></td>
+            </tr>
+        }
+    }
+
+
+</table>
+

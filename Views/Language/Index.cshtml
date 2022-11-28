@@ -1,0 +1,10 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@using System.Web;
+@using WbApp;
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@SharedLocalizer["Cashdesk"]</h1>
+

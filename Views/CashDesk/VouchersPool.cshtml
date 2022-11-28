@@ -1,0 +1,274 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.VouchersTracking.VouchersList
+@inject IJsonHelper Json;
+@using WbApp.Helpers;
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "VouchersPool";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model GetVouchersListModel
+
+<link rel="stylesheet" type="text/css" href="~/css/Vouchers.css">
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+
+<button id="reload" style="display:none; border:none; background:none" onclick="window.location.reload()">მთავარ გვერდზე დაბრუნება</button>
+
+<div id="menubtns" style="display:flex; flex-direction:column">
+    <div style="width:40%;display:flex; flex-direction:row;">
+        <button onclick="document.getElementById('currentvouchers').style.display='none';document.getElementById('reload').style.display='block';document.getElementById('newvoucher').style.display='block';document.getElementById('menubtns').style.display='none'">@SharedLocalizer["AddVouchers"]</button>
+        <button onclick="document.getElementById('currentvouchers').style.display='none';document.getElementById('reload').style.display='block';document.getElementById('changebranch').style.display='block';document.getElementById('menubtns').style.display='none'">@SharedLocalizer["MoveToAnotherBranch"]</button>
+    
+         @*   <button onclick="document.getElementById('reload').style.display='block';document.getElementById('currentvouchers').style.display='block';document.getElementById('menubtns').style.display='none'">არსებული ვაუჩერები</button>*@
+    </div>
+    <div>
+        <div style="color:red; font-size:12px">@ViewBag.Message</div>
+    </div>
+</div>
+
+
+
+<div id=newvoucher style="display:none">
+    <div style="display:flex; margin-top:10px; margin:0 auto; width:15%">
+        <form asp-action="ReadVouchersExcell" method="post" enctype="multipart/form-data">
+            <select id="branch" name="BranchID">
+                <option value="24">@SharedLocalizer["HeadOffice"]</option>
+                <option value="23">@SharedLocalizer["CityMallGldani"]</option>
+                <option value="22">@SharedLocalizer["CityMallSaburtalo"]</option>
+                <option value="21">@SharedLocalizer["TbilisiMall"]</option>
+            </select>
+            <input id="file" style="margin-top:10px" type="file" name="file" class="custom-file-input" />
+            <button style="margin-top:10px; width:190px" type="submit">@SharedLocalizer["Upload"]</button>
+        </form>
+
+    </div>
+</div>
+
+<div id=changebranch style="display:none; margin-top:10px">
+    <div>
+        <div class="scancards">
+          
+            <div class="card-inputs" id="newcard" style="width: 400px">
+                <div style="display: grid; grid-template-columns: 20px auto 50px">
+                    <label id="1">1</label>
+                    <input onkeyup="scanqr(this)" id="card1" style="width: 100%" />
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div>
+        <select style="margin-left: 20px;width: 330px; height: 25px; margin-top:5px" id="newbranch" name="newbranch">
+            <option value="24">@SharedLocalizer["HeadOffice"]</option>
+            <option value="23">@SharedLocalizer["CityMallGldani"]</option>
+            <option value="22">@SharedLocalizer["CityMallSaburtalo"]</option>
+            <option value="21">@SharedLocalizer["TbilisiMall"]</option>
+        </select>
+    </div>
+    <div>
+        <button id="addcodes" style="margin-left: 20px;width: 330px; height: 25px; margin-top:5px">@SharedLocalizer["Approve"]</button>
+    </div>
+</div>
+
+
+<div id=currentvouchers style="display:block">
+    <div style="display:flex; margin-top:10px">
+        <form asp-action="GetCardsByFile" method="get" enctype="multipart/form-data">
+            <button style="border:none; background:none" value="24" name=BranchID><u>@SharedLocalizer["HeadOffice"]</u></button>
+            <button style="border:none; background:none" value="23" name=BranchID><u>@SharedLocalizer["CityMallGldani"]</u></button>
+            <button style="border:none; background:none" value="22" name=BranchID><u>@SharedLocalizer["CityMallSaburtalo"]</u></button>
+            <button style="border:none; background:none" value="21" name=BranchID><u>@SharedLocalizer["TbilisiMall"]</u></button>
+        </form> 
+    </div>
+        <table style="margin-top:10px">
+            <tr>
+            <th>@SharedLocalizer["FileName"]</th>
+            <th>@SharedLocalizer["Date"]</th>
+            <th>@SharedLocalizer["Quantity"]</th>
+            <th>@SharedLocalizer["Details"]</th>
+            </tr>
+            
+             @foreach(var i in Model.voucherFiles){
+            <tr>
+                <td>@i.FIleName</td>
+                <td>@i.CreateDate.ToString("dd-MM-yyyy")</td>
+                <td>@i.Count</td>
+                <td><a href="/CashDesk/GetCardsByFile?Filename=@i.FIleName">@SharedLocalizer["Details"]</a></td>
+            </tr>
+             }
+        </table>
+     
+</div>
+<input hidden id="readercount" value="1" />
+
+<div class="overlay" id="overlay">
+    <div id="messagebox" class="messagebox" onclick="document.getElementById('overlay').style.display='none'; document.getElementById('messagebox').style.display='none'">
+    </div>
+</div>
+
+<input hidden value="@SharedLocalizer["VoucherUsed"]" id="voucherused" />
+<input hidden value="@SharedLocalizer["LanguageIncorrect"]" id="langualeincorrect" />
+
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+
+    $("#addcodes").click(function () {
+        var newbranch = $('#newbranch').val()
+        //$('#addcard1').addClass('hide');
+        //$('#perdingaddcard1').removeClass('hide');
+
+        var cardArray = [];
+     
+        var arraylen = Number($('#readercount').val()) 
+
+     
+        for (var i = 1; i < arraylen; i++) {
+            let code = $('#card' + i).val()
+           
+
+            cardArray.push({ "Code": code, "BranchID": newbranch, "Mode":1 });
+        }
+        /*  console.log(cardArray);*/ //second console output
+        setTimeout(() => {
+            var url = '@Url.Action("ChangeVouchersBranch", "CashDesk")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                async: false,
+
+                data: {
+
+                    "vouchersData": cardArray, 
+                },
+                cache: false,
+                success: function (data) {
+                    console.log(data) 
+                    if (data.actionResultCode == 200) {
+                        document.getElementById('changebranch').style.display='none';
+                        document.getElementById('currentvouchers').style.display = 'block'
+
+                        document.getElementById('messagebox').innerHTML = data.actionResultMsg;
+                        document.getElementById('messagebox').style.display = 'block';
+                        document.getElementById('overlay').style.display = 'block';
+                        setTimeout(() => {
+                            document.getElementById('messagebox').style.display = 'none';
+                            document.getElementById('overlay').style.display = 'none';
+                        }, 1000)
+
+                      
+
+                    }
+                    else {
+                        document.getElementById('messagebox').innerHTML = data.actionResultMsg;
+                        document.getElementById('messagebox').style.display = 'block';
+                        document.getElementById('overlay').style.display = 'block'; 
+                    }
+                },
+             
+            });
+        }, 500)
+    })
+
+
+    var timerobj = null;
+    function scanqr(e) {
+
+        var key = window.event.keyCode || window.event.charCode;
+
+        if (key != 32 && key != 46 && key != 8 && key != 13 && key != 16 && key != 36 && key != 18 && key != 20 && key != 91 && key != 91 && key != 93 && key != 32 && key != 33 && key != 34 && key != 35 && key != 37 && key != 38 && key != 39 && key != 40 && key != 44 && key != 145 && key != 19 && key != 46 && key != 144 && key != 45) {
+
+            if (timerobj) {
+                clearTimeout(timerobj);
+            }
+            timerobj = setTimeout(() => {
+                scanqrcode(e);
+            }, 500);
+        }
+
+    }
+    function scanqrcode(e) {
+        var r = e.value
+        var id=e.id
+        var currentlyreaded = Number($("#readercount").val());
+        
+        for (let i = 1; i < currentlyreaded; i++) {
+            var a = document.getElementById('card' + i).value
+        
+            
+            if (r == a && r!=null && a!= null  ) {
+                document.getElementById('messagebox').innerHTML = $("#voucherused").val();
+                document.getElementById('messagebox').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById(e.id).value = '';
+                document.getElementById(e.id).focus();
+                setTimeout(() => {
+                    document.getElementById('messagebox').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                }, 1000)
+
+                return false
+            }
+        }
+
+        const specialChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=_+[];'{}./<>?";
+        for (const s of r) {
+            if (!specialChars.includes(s)) {
+                document.getElementById('messagebox').innerHTML = $("#langualeincorrect").val();
+                document.getElementById('messagebox').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById(e.id).value = '';
+                setTimeout(() => {
+                    document.getElementById('messagebox').style.display = 'none';
+                    document.getElementById('overlay').style.display = 'none';
+                }, 1000)
+                return false
+            }
+        }
+      
+        var new_no = parseFloat(currentlyreaded) + 1;
+        $("#readercount").val(new_no);
+
+        var newElement = `<div id=div` + new_no + ` style="display: grid; grid-template-columns: 20px auto 50px">
+                                                                                    <label id=` + new_no + ` > ` + new_no + ` </label>
+                                                                                <input onkeyup = "scanqr(this)"  id = "card` + new_no + `"  style="width: 100%"/>
+                                                                                 
+                                                            </div>
+                                                                    `
+
+        $('#newcard').append(newElement);
+        document.getElementById('card' + new_no).focus();
+
+
+
+
+
+    }
+
+
+</script>

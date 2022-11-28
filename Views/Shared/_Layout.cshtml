@@ -1,0 +1,448 @@
+﻿@using System.Security.Claims
+@inject IJsonHelper Json;
+@using System.Linq;
+@using WbApp.Helpers;
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@using System.Web;
+@using WbApp;
+
+<!DOCTYPE html>
+<style>
+    .parent {
+        display: flex;
+    }
+
+    #backdrop {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        background-color: #00000054;
+        display: none;
+        z-index: 1
+    }
+
+    @@webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomePage</title>
+    <link rel="icon" href="~/img/icontab.png" style="width:5px; height:2px">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Preview page of Metronic Admin Theme #2 for statistics, charts, recent events and reports" name="description" />
+    <meta content="" name="author" />
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/templatecss/components-md.min.css" rel="stylesheet" />
+    <link href="~/css/templatecss/plugins-md.min.css" rel="stylesheet" />
+    <link href="~/lib/layout2/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/layout2/css/themes/default.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/layout2/css/custom.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-md">
+    <div class="page-header navbar navbar-fixed-top">
+        <div class="page-header-inner ">
+            <div class="page-logo" style="background-color:white">
+               <a asp-controller="Home" asp-action="Index">
+                    <img src="~/img/@SharedLocalizer["Unilogo"]" style="height: 55px; width: 110px; margin-top: 10px; margin-left: 20px;" alt="logo" class="logo-default">
+                </a> 
+
+
+            </div>
+            <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
+            <div class="page-top">
+                <div style="display:flex; flex-direction:row">
+
+
+                    <div style="display:inline-block; margin: 0 auto; white-space:nowrap">
+                        <span style=" margin-left:50%; color: black; font-size:20px" class="username username-hide-on-mobile">
+                          @User.Claims.Where(a => a.Type == ClaimTypes.Locality).FirstOrDefault().Value
+                        </span>
+                    </div>
+
+
+                    <div class="top-menu">
+                        <ul class="nav navbar-nav pull-right">
+
+                            <li class="dropdown dropdown-user">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                    <span class="username username-hide-on-mobile"> <img src="~/img/user.png" style="width:20px; height:20px" /> @User.Identity.Name</span>
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-default">
+                                    <li style="width:110px">
+                                        <form method="get" asp-controller="CashDesk" asp-action="UsersProfile">
+                                            <button style="width:100%; border:none; background:none"><img src="~/img/user.png" style="width:20px; height:20px" /> My Profile</button>
+                                        </form>
+                                    </li>
+
+                                    <li style="width:110px; margin-top:5px">
+
+                                        <form method="post" asp-controller="Home" asp-action="Logout">
+                                            <button style="width:100%; border:none; background:none"> <img src="~/img/back.png" style="width:20px; height:20px" /> Sign out</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                         
+                    </div>
+                    <ul style="margin-right:20px; margin-top:10px">
+                        <li>@Html.ActionLink(linkText:"GE",  actionName:"Index", controllerName:"Language", routeValues:new{language="ka", redirectUrl=""}, htmlAttributes:new{@class="langUrl", @id="ka" })</li>
+                      <li>@Html.ActionLink(linkText:"EN", actionName:"Index", controllerName:"Language", routeValues:new{language="en", redirectUrl=""}, htmlAttributes:new{@class="langUrl", @id="en" })</li>
+
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"> </div>
+    <div class="page-container">
+        <div class="page-sidebar-wrapper">
+            <div class="page-sidebar navbar-collapse collapse" style="height: 100vh !important">
+                <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-hover-submenu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+
+                    <li class="nav-item  ">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i style="color:#01b070" class="icon-wallet"></i>
+                            <span class="title">@SharedLocalizer["Cashdesk"]</span>
+                            <span class="arrow"></span>
+                        </a>
+
+                        <ul class="sub-menu">
+
+                            @if ((User.Claims.Where(a => a.Type == ClaimTypes.Role).Select(u => u.Value).FirstOrDefault()) == "21" || (User.Claims.Where(a => a.Type == ClaimTypes.Sid).Select(u => u.Value).FirstOrDefault()) == "21")
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="CashDesk" asp-action="GetCashDeskTransactions" asp-route-BranchID=21>
+                                        <span class="title">@SharedLocalizer["TbilisiMall"]</span>
+                                    </a>
+                                </li>
+                            }
+                            @if ((User.Claims.Where(a => a.Type == ClaimTypes.Role).Select(u => u.Value).FirstOrDefault()) == "21" || (User.Claims.Where(a => a.Type == ClaimTypes.Sid).Select(u => u.Value).FirstOrDefault()) == "22")
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="CashDesk" asp-action="GetCashDeskTransactions" asp-route-BranchID=22>
+                                        <span class="title">@SharedLocalizer["CityMallSaburtalo"]</span>
+                                    </a>
+                                </li>
+                            }
+                            @if ((User.Claims.Where(a => a.Type == ClaimTypes.Role).Select(u => u.Value).FirstOrDefault()) == "21" || (User.Claims.Where(a => a.Type == ClaimTypes.Sid).Select(u => u.Value).FirstOrDefault()) == "23")
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="CashDesk" asp-action="GetCashDeskTransactions" asp-route-BranchID=23>
+                                        <span class="title">@SharedLocalizer["CityMallGldani"]</span>
+                                    </a>
+                                </li>
+                            }
+                             @if ((User.Claims.Where(a => a.Type == ClaimTypes.Role).Select(u => u.Value).FirstOrDefault()) == "21" || (User.Claims.Where(a => a.Type == ClaimTypes.Sid).Select(u => u.Value).FirstOrDefault()) == "25")
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="CashDesk" asp-action="VipCashDesk" asp-route-BranchID=25>
+                                        <span class="title">@SharedLocalizer["VipAndCorp"]</span>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                         
+                    </li>
+
+
+                       <li class="nav-item  ">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i style="color:#01b070" class="icon-user"></i>
+                            <span class="title">@SharedLocalizer["Customers"]</span>
+                            <span class="arrow"></span>
+                        </a>
+
+                        <ul class="sub-menu">
+
+                             
+                                <li class="nav-item">
+                                    <a asp-controller="CashDesk" asp-action="Customers"> 
+                                        <span class="title">@SharedLocalizer["Registration"]</span>
+                                    </a>
+                                </li>
+                                  <li class="nav-item">
+                                    <a asp-controller="CashDesk" asp-action="GetUsersList" asp-route-IsLegal=1>
+                                    <span class="title">@SharedLocalizer["Company"]</span>
+                                    </a>
+                                </li>
+                             <li class="nav-item">
+                                <a asp-controller="CashDesk" asp-action="GetUsersList" asp-route-IsLegal=0>
+                                    <span class="title">@SharedLocalizer["Individual"]</span>
+                                    </a>
+                                </li>
+                            
+                        </ul>
+                         
+                    </li>
+
+                    <li class="nav-item  ">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i style="color:#01b070" class="icon-credit-card"></i>
+                            <span class="title">@SharedLocalizer["Vouchers"]</span>
+                            <span class="arrow"></span>
+                        </a>
+
+                        <ul class="sub-menu">
+                            <li class="nav-item">
+                                <a asp-controller="CashDesk" asp-action="Vouchers">
+                                    <span class="title">@SharedLocalizer["Vouchers"]</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="CashDesk" asp-action="PriceCalc">
+                                    <span class="title">@SharedLocalizer["PriceCalc"]</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    @*  @if ((User.Claims.Where(a => a.Type == ClaimTypes.Role).Select(u => u.Value).FirstOrDefault()) == "19")
+                    {*@
+                    <li class="nav-item  ">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i style="color:#01b070" class="icon-cloud-upload"></i>
+                            <span class="title">@SharedLocalizer["Tracking"]</span>
+                            <span class="arrow"></span>
+                        </a>
+
+                        <ul class="sub-menu">
+                            <li class="nav-item">
+                                <a asp-controller="CashDesk" asp-action="VouchersPool">
+                                    <span class="title">@SharedLocalizer["AddVouchers"]</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i style="color:#01b070" class="icon-doc"></i>
+                            <span class="title">@SharedLocalizer["Report"]</span>
+                            <span class="arrow"></span>
+                        </a>
+
+                        <ul class="sub-menu">
+                            <li class="nav-item">
+                                <a asp-controller="CashDesk" asp-action="vouchersreport">
+                                    <span class="title">@SharedLocalizer["Vouchers"]</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item  ">
+                        <a href="javascript:;" class="nav-link nav-toggle">
+                            <i style="color:#01b070" class="icon-settings"></i>
+                            <span class="title">@SharedLocalizer["Settings"]</span>
+                            <span class="arrow"></span>
+                        </a>
+
+                        @*     <ul class="sub-menu">
+                        <li class="nav-item">
+                        <a asp-controller="User" asp-action="Operators">
+                        <span class="title">ოპერატორები</span>
+                        </a>
+                        </li>
+
+                        </ul>*@
+
+                        <ul class="sub-menu">
+                            <li class="nav-item">
+                                <a asp-controller="Settings" asp-action="UsdtRates">
+                                    <span class="title">@SharedLocalizer["SalesPrice"]</span>
+                                </a>
+                            </li>  
+                            @*
+                            <li class="nav-item">
+                            <a asp-controller="Settings" asp-action="GenerateVouchers">
+                            <span class="title">v</span>
+                            </a>
+                            </li>*@
+
+                            <li class="nav-item">
+                                <a asp-controller="Settings" asp-action="PrintVouchers">
+                                    <span class="title">@SharedLocalizer["PrintVouchers"]</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    @*}*@
+
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="page-content-wrapper">
+            <div class="page-content">
+
+
+                @*<div class="page-bar">
+                <ul class="page-breadcrumb">
+                <li>
+                <i class="icon-home"></i>
+                <a asp-area="AML" asp-controller="Home" asp-action="Index">მთავარი გვერდი</a>
+                </i>
+                </li>
+                </ul>
+                </div>*@
+
+                <div class="row">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+        <a href="javascript:;" class="page-quick-sidebar-toggler">
+            <i class="icon-login"></i>
+        </a>
+        <div class="page-quick-sidebar-wrapper" data-close-on-body-click="false">
+            <div class="page-quick-sidebar">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="javascript:;" data-target="#quick_sidebar_tab_1" data-toggle="tab">
+                            Users
+                            <span class="badge badge-danger">2</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" data-target="#quick_sidebar_tab_2" data-toggle="tab">
+                            Alerts
+                            <span class="badge badge-success">7</span>
+                        </a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                            More
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="javascript:;" data-target="#quick_sidebar_tab_3" data-toggle="tab">
+                                    <i class="icon-bell"></i> Alerts
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-target="#quick_sidebar_tab_3" data-toggle="tab">
+                                    <i class="icon-info"></i> Notifications
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" data-target="#quick_sidebar_tab_3" data-toggle="tab">
+                                    <i class="icon-speech"></i> Activities
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="javascript:;" data-target="#quick_sidebar_tab_3" data-toggle="tab">
+                                    <i class="icon-settings"></i> Settings
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    <div id="backdrop">
+    </div>
+
+    <div class="page-footer">
+        <div class="page-footer-inner">
+            Unicard @DateTime.Now.Date.Year
+            &nbsp;&nbsp;
+            <div class="scroll-to-top">
+                <i class="icon-arrow-up"></i>
+            </div>
+        </div>
+        <script src="~/lib/jquery.min.js"></script>
+        <script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="~/lib/jquery.blockui.min.js"></script>
+        <script src="~/lib/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <script src="~/lib/moment.min.js"></script>
+        <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+        <script src="~/lib/horizontal-timeline/horizontal-timeline.min.js" type="text/javascript"></script>
+        <script src="~/lib/jquery-ui.min.js"></script>
+        <script src="~/lib/app.min.js"></script>
+        <script src="~/lib/ui-modals.min.js"></script>
+        <script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+        @*<script src="~/lib/dashboard.min.js"></script>*@
+        <script src="~/lib/layout2/scripts/layout.min.js" type="text/javascript"></script>
+        <script src="~/lib/layout2/scripts/demo.min.js" type="text/javascript"></script>
+        <script src="~/lib/quick-sidebar.min.js"></script>
+        <script src="~/lib/quick-nav.min.js"></script>
+
+
+
+        <script src="~/js/login.js"></script>
+
+        @RenderSection("Scripts", required: false)
+        <!-- END THEME LAYOUT SCRIPTS -->
+        <script>
+
+            var urls = document.getElementsByClassName("langUrl")
+            var currenturl = location.href;
+            var newurl0 = urls[0] + "&redirectUrl=" + encodeURIComponent(currenturl);
+            var newurl1 = urls[1] + "&redirectUrl=" + encodeURIComponent(currenturl);
+        
+          urls[0].href=newurl0;
+          urls[1].href=newurl1;
+
+
+            $(".loadform").click(function () {
+                document.body.style.overflow = 'hidden';
+                document.getElementById("backdrop").style.display = 'block';
+                document.getElementById('warnongbox').style.display = 'block';
+            })
+
+            $(document).ready(function () {
+                $('#clickmewow').click(function () {
+                    $('#radio1003').attr('checked', 'checked');
+                });
+            })
+
+
+        </script>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+﻿@using System.Security.Claims 
+
+@{
+    ViewData["Title"] = "UsersProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link rel="stylesheet" type="text/css" href="~/css/UserProfile.css">
+
+<table style="width:50%">
+    <tr>
+        <th> სახელი:</th>
+        <td> @User.Claims.Where(a => a.Type == ClaimTypes.Name).FirstOrDefault().Value</td>
+    </tr>
+    <tr>
+        <th> გვარი:</th>
+        <td> @User.Claims.Where(a => a.Type == ClaimTypes.Surname).FirstOrDefault().Value</td>
+    </tr>
+    <tr>
+        <th> მობილური:</th>
+        <td> @User.Claims.Where(a => a.Type == ClaimTypes.MobilePhone).FirstOrDefault().Value</td>
+    </tr>
+    <tr>
+        <th> ფილიალი:</th>
+        <td> @User.Claims.Where(a => a.Type == ClaimTypes.Locality).FirstOrDefault().Value</td>
+    </tr>
+</table>
+ 

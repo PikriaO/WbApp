@@ -1,0 +1,40 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Security.Claims
+@using WbApp.Services.GetPaymentDetails;
+@using WbApp.Services.GetUser
+@inject IJsonHelper Json;
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "Userprofile";
+
+}
+<div style="float:right">
+    <button id="printqr" style="float:right" onclick="printqr()"><i class="fa fa-print" aria-hidden="true"></i></button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 40px">
+    <div style="display:felx; flex-direction:row">
+        <label style="font-size: 14px">@SharedLocalizer["OrderNumber"]:</label>
+        <label id="qr-id" style="font-size: 14px"></label>
+    </div>
+    <div style="margin: 0 auto;">
+        <img style="width: 150px;" id="qr-code" src="" />
+        </div>
+    <div >
+        <p style="text-align: center; font-size: 12px">@SharedLocalizer["Amount"]</p>
+        <p style="text-align: center; font-size: 20px" id="qr-usdt"></p>
+    </div>
+    <div>
+        <p style="text-align: center; font-size: 12px">@SharedLocalizer["Date"]</p>
+        <p style="text-align: center; font-size: 20px" id="qr-date"></p>
+    </div>
+    <div style="padding:20px; border: 1px dashed #cfcfcf">
+            <p id="code" style="text-align: center; font-size: 20px">
+           
+            </p>
+    </div>
+</div>
+
+ 

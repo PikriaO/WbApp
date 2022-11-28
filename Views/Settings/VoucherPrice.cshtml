@@ -1,0 +1,201 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.USDTRates
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "VoucherPrice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model UsdtRatesModel
+<div style="display:flex; flex-direction:row">
+    <form asp-action="UsdtRates" method="HttpGet" enctype="multipart/form-data">
+
+        <button>@SharedLocalizer["CurrentPrice"]</button>
+        <input hidden name="Mode" value="1" />
+    </form>
+    <form asp-action="UsdtRates" method="HttpGet" enctype="multipart/form-data">
+        <button>@SharedLocalizer["OldPrice"]</button>
+    </form>
+
+    @if (Model.Mode != 1)
+    {
+        <form asp-action="UsdtRates" method="HttpGet" enctype="multipart/form-data">
+            <input type="date" name="dt" />
+            <button>@SharedLocalizer["Search"]</button>
+        </form>
+    }
+    <button id="new">@SharedLocalizer["NewPrice"]</button>
+</div>
+@if (Model.Mode == 1)
+{
+    <div>
+        @try
+        {
+            <input hidden id="count" value="@Model.currentRates.Count()" />
+            <div style="display:flex; flex-direction:row">
+                <label style="width:55px">USDT</label>
+                <label style="width:150px">@SharedLocalizer["Amount"]</label>
+                <label style="width:140px">@SharedLocalizer["ChangeDate"]</label>
+                <label style="width:140px">@SharedLocalizer["ActivationDate"]</label>
+            </div>
+            @foreach (var a in Model.currentRates)
+            {
+                <div style="display:flex; flex-direction:row">
+
+                    <input id="@a.Id" readonly style="width:50px" value="@a.Usdt" />
+                    <input id="price_@a.Id" style="width:150px; text-align:right" value="@a.Price" />
+                    <input readonly style="width:140px" value="@a.FormatedDate" />
+                    <input readonly style="width:140px" value="@a.DtFormatted" />
+
+                </div>
+            }
+            <button id="savechanges">@SharedLocalizer["SaveChanges"]</button>
+
+        }
+        catch (Exception e)
+        {
+            <label>@Model.ActionResultMsg</label>
+
+        }
+    </div>
+
+}
+
+else
+{
+    <div>
+        @try
+        {
+            <div style="display:flex; flex-direction:row">
+                <label style="width:55px">USDT</label>
+                <label style="width:150px">@SharedLocalizer["Amount"]</label>
+                <label style="width:140px">@SharedLocalizer["ChangeDate"]</label>
+                <label style="width:140px">@SharedLocalizer["ActivationDate"]</label>
+            </div>
+            @foreach (var a in Model.currentRates)
+            {
+                <div style="display:flex; flex-direction:row">
+
+                    <input readonly style="width:50px" value="@a.Usdt" />
+                    <input readonly style="width:150px; text-align:right" value="@a.Price" />
+                    <input readonly style="width:140px" value="@a.FormatedDate" />
+                    <input readonly style="width:140px" value="@a.DtFormatted" />
+
+
+                </div>
+            }
+        }
+        catch (Exception e)
+        {
+            <label>@Model.ActionResultMsg</label>
+        }
+    </div>
+}
+<div id="newrate" style="display:none;">
+    <div style="display:flex; flex-direction:column">
+        <div style="display:flex; flex-direction:row">
+            <input id="newusdt" style="width:50px" />
+            <input id="newprice" style="width:150px; text-align:right" />
+            <input type="date" id="newdt" style="width:140px" />
+        </div>
+        <div>
+            <button id="addnewrate">@SharedLocalizer["Add"]</button>
+        </div>
+    </div>
+</div>
+
+
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+    $("#new").click(function () {
+        document.getElementById('newrate').style.display = 'block';
+        document.getElementById('savechanges').style.display = 'none';
+
+    });
+    $("#addnewrate").click(function () {
+        var url = '@Url.Action("UpdateUsdtRates", "Settings")';
+        $.ajax({
+
+            type: "POST",
+            url: url,
+            async: false,
+
+            data: {
+                "Mode": 1,
+                "ActionType": 2,
+                "Usdt": $('#newusdt').val(),
+                "Price": $('#newprice').val(),
+                "Dt": $('#newdt').val(),
+            },
+            cache: false,
+            success: function (data) {
+
+                console.log(data)
+
+                if (data.actionResultCode == 200) {
+                    alert(data.actionResultMsg)
+
+
+                }
+                else {
+                    alert(data.actionResultMsg)
+                }
+            },
+            //error: function () {
+            //    $("#mesageboxb").html("დაფიქსირდა შეცდომა")
+            //}
+
+        });
+    })
+     
+
+    $("#savechanges").click(function () {
+        var arraylen = Number($('#count').val())
+        var arrayRates = [];
+        for (var i = 1; i <= arraylen; i++) {
+
+            let price = $('#price_' + i).val();
+            let usdt = $('#' + i).val();
+            arrayRates.push({ "Usdt": usdt, "Price": price });
+        }
+        var url = '@Url.Action("UpdateUsdtRates", "Settings")';
+        $.ajax({
+
+            type: "POST",
+            url: url,
+            async: false,
+
+            data: {
+                "Usdtarray": arrayRates,
+                "Mode": 2,
+                "ActionType": 2
+            },
+            cache: false,
+            success: function (data) {
+
+                console.log(data)
+
+                if (data.actionResultCode == 200) {
+                    alert(data.actionResultMsg)
+
+
+                }
+                else {
+                    alert(data.actionResultMsg)
+                }
+            },
+            //error: function () {
+            //    $("#mesageboxb").html("დაფიქსირდა შეცდომა")
+            //}
+
+        });
+    })
+
+</script>

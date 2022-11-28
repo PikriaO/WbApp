@@ -1,0 +1,639 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using WbApp.Services.GetPaymentDetails;
+@inject IJsonHelper Json;
+@{
+    ViewData["Title"] = "PaymentDetails";
+
+}
+@model PaymentDetailsModel
+
+<div>
+
+
+    <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+        <div>
+            <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+        </div>
+        <div style="width:80%; text-align:center; ">
+            <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+        </div>
+        <div style="float:right">
+            <button style="float: right;width: 30px;font-size: 12px;" id="handoveren">GE</button>
+            <button id="printregbtnen" style="float:right" onclick="printregen()"><i class="fa fa-print" aria-hidden="true"></i></button>
+        </div>
+    </div>
+    <div style="margin-top:20px; ">
+        <div>
+
+            <label> <b>მომხმარებელმა</b></label>
+            <label style="width:80%; text-align:center; border-bottom: 1px dotted">@Model.Name @Model.Surname, @Model.PersonID, @Model.Phone</label>
+            <label style="width: 80%;float: right;text-align: center;font-size: 10px;">სახელი და გვარი, პირადი ნომერი, მობილური</label>
+
+            <label><b>შეიძინა</b>, ხოლო <b>შპს უნივერსალ ქარდ კორპორეშენის ოპერატორმა</b>  </label>
+
+            <label style="width:100%; text-align:center; border-bottom: 1px dotted">@Model.OperatorName</label>
+
+            <label style="width:100%; text-align: center;font-size: 10px;">სახელი და გვარი</label>
+
+            <label>
+                ქ. თბილისში  @Model.BranchAddress  მისამართზე მდებარე სერვის  ცენტრიდან  2022 წლის @Model.CreateMonth
+                <b>მომხმარებელს გადასცა</b>  @Model.Count  ცალი შპს „ვაითბით ჯორჯიას“
+                (ს/კ: 405520217) მიერ ემიტირებული<b> ვაუჩერი</b> სულ ჯამური ღირებულებით @Model.SumAmount ლარი.
+            </label>
+        </div>
+
+        <div style="display:flex; flex-direction:column; margin-top:10px; font-size:13px">
+            <label>ვაუჩერის კოდი (კოდები):</label>
+
+            @foreach (var i in Model.details.Where(o => o.Count < 18))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+        <div style="margin-top:10px">
+            <label style="font-size:12px">წინამდებარე აქტით დასტურდება მომხმარებლის მიერ ბარათის ყიდვისა და მიღების ფაქტი ამავე აქტში მოცემული პირობებით.</label>
+            <label>
+                წინამდებარე აქტზე ხელმოწერით მომხმარებელი თანმობას აცხადებს მისი პირადი ნომრის მეშვეობით შპს უნივერსალ ქარდ კორპორეიშენის
+                (ს.კ. 202461406) მომხმარებელთა ბაზაში განხორციელდეს მისი შემდეგი მონაცემების გამოძახება -სახელი, გვარი, მობილური ტელეფონი
+                შემდგომში მიღება ჩაბარების აქტის ავტომატურად შევსების მიზნით.
+            </label>
+        </div>
+
+    </div>
+    <div style="display:flex; flex-direction:row">
+        <div style="margin-top:10px">
+
+            <div>
+                <label>მომხმარებელი ______________________</label>
+            </div>
+            <div style="margin-top:10px">
+                <label>ოპერატორი ______________________</label>
+            </div>
+            <div style="margin-top:10px">
+                <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+            </div>
+        </div>
+        <div style="width: 61%; margin-top: 10px">
+            <div style="display:flex; flex-direction:row; float:right">
+                <div style="display:flex; flex-direction:column">
+
+                    <div class="img">
+                        <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                    <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                        <label style="text-align:right">
+                            ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                            +99532 2 555 222 <br />
+                            info@unicard.ge
+                        </label>
+                    </div>
+                </div>
+                <div class="colors">
+                    <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*2 gverdi*@
+@if (Model.Count >= 18)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 18 && o.Count < 48))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@*3 gverdi*@
+@if (Model.Count >= 48)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 48 && o.Count < 78))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@*4 gverdi*@
+@if (Model.Count >= 78)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 78 && o.Count < 108))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*5 gverdi*@
+@if (Model.Count >= 108)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 108 && o.Count < 138))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*6 gverdi*@
+@if (Model.Count >= 138)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 138 && o.Count < 168))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@*7 gverdi*@
+@if (Model.Count >= 168)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 168 && o.Count < 198))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*8 gverdi*@
+@if (Model.Count >= 198)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 198 && o.Count < 228))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@*9 gverdi*@
+@if (Model.Count >= 228)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 228 && o.Count < 258))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@*10 gverdi*@
+@if (Model.Count >= 258)
+{
+    <div style="margin-top: 30px;">
+        <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+            <div>
+                <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+            </div>
+            <div style="width:80%; text-align:center; ">
+                <label style="font-size:18px; margin-top:20px"><b>მიღება ჩაბარების აქტი</b></label>
+            </div>
+        </div>
+
+        <div style="margin-top:20px">
+
+            @foreach (var i in Model.details.Where(o => o.Count >= 258 && o.Count < 288))
+            {
+                <label> @i.Count . @i.Code - @i.Amount ₾ </label>
+            }
+
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-top:10px">
+
+                <div>
+                    <label>მომხმარებელი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>ოპერატორი ______________________</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label>თარიღი @Model.CreateDate.ToString("dd-MM-yyyy") </label>
+                </div>
+            </div>
+            <div style="width: 61%; margin-top: 10px">
+                <div style="display:flex; flex-direction:row; float:right">
+                    <div style="display:flex; flex-direction:column">
+
+                        <div class="img">
+                            <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                        </div>
+                        <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                            <label style="text-align:right">
+                                ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                                +99532 2 555 222 <br />
+                                info@unicard.ge
+                            </label>
+                        </div>
+                    </div>
+                    <div class="colors">
+                        <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+

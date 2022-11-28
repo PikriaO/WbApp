@@ -1,0 +1,158 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using WbApp.Services.CashDesk;
+@inject IJsonHelper Json;
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "CashDeskTransactions";
+
+}
+@model CashDeskTransactionsModel
+
+<div>
+    <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid">
+        <div>
+            <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+        </div>
+        <div style="width:80%; text-align:center; ">
+            <label style="font-size:18px; margin-top:20px"><b>@SharedLocalizer["IncomeReceipt"]</b></label>
+        </div>
+        <div style="float:right">
+            <button id="printfillorder" style="float:right" onclick="printfill()"><i class="fa fa-print" aria-hidden="true"></i></button>
+        </div>
+    </div>
+
+    <div style="display:flex; flex-direction:row; margin-top:15px">
+        <div style="margin-left:5px">
+            <label>@SharedLocalizer["CashDeskAccount"]</label>
+            <input style="width:210px; margin-left:25px" value="@Model.AccountNumber" />
+        </div>
+        <div style="margin-left:50px">
+            <label>@SharedLocalizer["Date"]</label>
+            <input style="width:210px" value="@DateTime.Now" />
+        </div>
+    </div>
+    <div style="display:flex; flex-direction:row; margin-top:10px; margin-left:5px">
+        <div>
+            <label>@SharedLocalizer["TransitAccount"]</label>
+            <input style="width:210px" value="@Model.TrAccount" />
+        </div>
+        <div style="margin-left:50px">
+            <label>@SharedLocalizer["Amount"]</label>
+            <input style="margin-left:14px; width:70px; text-align:right" id="fillorderamount" />
+        </div>
+        <div style="margin-left:13px">
+            <label>@SharedLocalizer["Ccy"]</label>
+            <input style="width:70px" value="GEL" />
+        </div>
+    </div>
+    <div style="display:flex; flex-direction:row; margin-left:5px; margin-top:10px">
+        <label>@SharedLocalizer["Description"]</label>
+        <input style="width:525px; margin-left:61px" value="სალაროს გამაგრება" />
+    </div>
+
+    <div style="display:flex; flex-direction:row; margin-left:5px; margin-top:10px">
+        <div style="margin-top:10px">
+            <div style="margin-top:10px">
+                <label>@SharedLocalizer["operator"] ______________________</label>
+            </div>
+            <div style="margin-top:10px">
+                <label>@SharedLocalizer["Branch"]: @Model.BranchName</label>
+            </div>
+        </div>
+        <div style="width: 61%; margin-top: 10px; margin-left:18px">
+            <div style="display:flex; flex-direction:row; float:right">
+                <div style="display:flex; flex-direction:column">
+
+                    <div class="img">
+                        <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                    <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                        <label style="text-align:right">
+                            @SharedLocalizer["HeadOfficeAdress"] <br />
+                            +99532 2 555 222 <br />
+                            info@unicard.ge
+                        </label>
+                    </div>
+                </div>
+                <div class="colors">
+                    <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div style="border-top:1px dotted; margin-top:100px">
+    <div style="display:flex; flex-direction:row; width:100%; height:70px; border-bottom:1px solid; margin-top:10px">
+        <div>
+            <img src="/img/uninew_en.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+        </div>
+        <div style="width:80%; text-align:center; ">
+            <label style="font-size:18px; margin-top:20px"><b>@SharedLocalizer["IncomeReceipt"]</b></label>
+        </div>
+
+    </div>
+
+    <div style="display:flex; flex-direction:row; margin-top:15px">
+        <div style="margin-left:5px">
+            <label>@SharedLocalizer["CashDeskAccount"]</label>
+            <input style="width:210px; margin-left:25px" value="@Model.AccountNumber" />
+        </div>
+        <div style="margin-left:50px">
+            <label>@SharedLocalizer["Date"]</label>
+            <input style="width:210px" value="@DateTime.Now" />
+        </div>
+    </div>
+    <div style="display:flex; flex-direction:row; margin-top:10px; margin-left:5px">
+        <div>
+            <label>@SharedLocalizer["TransitAccount"]</label>
+            <input style="width:210px" value="@Model.TrAccount" />
+        </div>
+        <div style="margin-left:50px">
+            <label>@SharedLocalizer["Amount"]</label>
+            <input style="margin-left:14px; width:70px; text-align:right" id="fillorderamount1" />
+        </div>
+        <div style="margin-left:13px">
+            <label>@SharedLocalizer["Ccy"]</label>
+            <input style="width:70px" value="GEL" />
+        </div>
+    </div>
+    <div style="display:flex; flex-direction:row; margin-left:5px; margin-top:10px">
+        <label>@SharedLocalizer["Description"]</label>
+        <input style="width:525px; margin-left:61px" value="სალაროს გამაგრება" />
+    </div>
+
+    <div style="display:flex; flex-direction:row; margin-left:5px; margin-top:10px">
+        <div style="margin-top:10px">
+            <div style="margin-top:10px">
+                <label>@SharedLocalizer["operator"] ______________________</label>
+            </div>
+            <div style="margin-top:10px">
+                <label>@SharedLocalizer["Branch"]: @Model.BranchName</label>
+            </div>
+        </div>
+        <div style="width: 61%; margin-top: 10px; margin-left:18px">
+            <div style="display:flex; flex-direction:row; float:right">
+                <div style="display:flex; flex-direction:column">
+
+                    <div class="img">
+                        <img src="/img/logo-en.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                    <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                        <label style="text-align:right">
+                            @SharedLocalizer["HeadOfficeAdress"] <br />
+                            +99532 2 555 222 <br />
+                            info@unicard.ge
+                        </label>
+                    </div>
+                </div>
+                <div class="colors">
+                    <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

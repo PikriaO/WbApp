@@ -1,0 +1,31 @@
+﻿.loginform {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    margin: 0 auto;
+    margin-top: 5%;
+    padding: 5px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.errortext {
+    margin: 0 auto;
+    color: red;
+    padding-bottom: 10px;
+}
+
+.branchdropdown {
+    height: 30px;
+  
+
+    margin-top: 5px
+}
+.loginbutton {
+    height: 30px;
+    margin-top: 5px;
+    border: none;
+    background: #ddbf76;
+    border-radius: 3px;
+}

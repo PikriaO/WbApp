@@ -1,0 +1,61 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq; 
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.Report
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "VouchersReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+ 
+@model VouchersReportModel
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<div>
+    <div style="width:60% ; margin: 0 auto">
+        <form asp-controller="CashDesk" asp-action="vouchersreport" method="get" class="parent">
+
+            <label>@SharedLocalizer["StartDate"]</label>
+            <input value="@Model.StartDate" type="date" name="StartDate" />
+            <label>@SharedLocalizer["EndDate"]</label>
+            <input value="@Model.EndDate" type="date" name="EndDate" /> 
+            <button type="submit">@SharedLocalizer["Search"]</button>
+        </form>
+    </div>
+    <div style="margin-top:10px; margin-left:10px">
+        <table>
+            <tr>
+                <th>@SharedLocalizer["Branch"]</th>
+                <th>@SharedLocalizer["TotalAmount"]</th>
+                <th>@SharedLocalizer["TotalSum"]</th>
+            </tr>
+            @foreach(var a in Model.vReports){
+            <tr>
+                <td>@a.BranchName</td>
+                <td style="padding:0; padding-right:5px; text-align:right">@a.SAmount</td>
+                <td>@a.Count</td>
+            </tr>
+            }
+        </table>
+    </div>
+   
+</div>
+

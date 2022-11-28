@@ -1,0 +1,63 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@inject IJsonHelper Json;
+@{
+    ViewData["Title"] = "QRVouchers";
+
+}
+@model List<PdfData>
+
+<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+<table style="border-collapse: unset;  border: none; background:#dfdfdf;">
+    
+
+
+    @for (int i = 0; i < Math.Ceiling((Convert.ToDecimal(Model.Count) / 4)); i++)
+    {
+        <tr style="border-collapse: unset; border: none; margin:0px; padding: 0px">
+            @for (int j = (i * 4); j < (i * 4) + 4 && j < Model.Count(); j++)
+            {
+                @* <td style="border: 0px solid;   margin:0px; padding: 0px;  width:393px; height:245px; background-image: url(@Model[j].ImgUrl/img/card_back.png); background-repeat: no-repeat; background-size: 393px 245px;" border="0"> *@
+                <td style="border: 0px solid;   margin:0px; padding: 0px;  width:422px; height:271px; background-image: url(@Model[j].ImgUrl/img/card_back.png); background-repeat: no-repeat; background-size:cover" border="0">
+
+                    <div style=" padding-top: 30px; margin-left: 18px; width:115px;">
+                        <img style="width: 115px; height: 115px;" src="@Model[j].QrData" />
+                    </div>
+                    <div style="margin-left: 24px; margin-top:15px; width:100px; text-align:center; font-size:11px;">
+                        <label style="font-family: 'Montserrat'; color:#999999">@Model[j].VoucherPass</label>
+                    </div>
+                    <div style="margin-top:35px; text-align:center; font-size:11px">
+                        <label style="font-family: 'Montserrat'">@Model[j].VoucherCode</label>
+                    </div>
+                </td>
+            }
+        </tr>
+        @if ((i + 1) % 4 == 0)
+        {
+            
+                <tr style="height:262px">
+                    <td></td>
+            </tr> 
+             
+        }
+    }
+     
+</table>
+@*<div style="width:1000px; position: relative">
+    @foreach (var i in Model)
+    {
+        <div style="position: absolute, top: 0, left: (@i.count *317.4)px; background-image: url( @i.ImgUrl/img/card_back.png); background-repeat: no-repeat; width:317.4px; height:196.5px; background-size:cover;">
+            <div style=" padding-top: 45.89px; margin-left: 18.15px; width:75.59px;">
+                <img style="width: 75.59px; height: 75.64px;" src="@i.QrData" />
+            </div>
+            <div style="margin-left: 18.15px; margin-top:18.89px; width:75.59px; text-align:center; font-size:6px;">
+                <label>@i.VoucherPass</label>
+            </div>
+            <div style="margin-top:35px; text-align:center; font-size:6px">
+                <label>@i.VoucherCode</label>
+            </div>
+        </div>
+    }
+
+</div>
+*@

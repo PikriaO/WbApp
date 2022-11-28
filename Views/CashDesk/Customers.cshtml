@@ -1,0 +1,316 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<style>
+    .firststep, .companyreg, .individualreg {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    .individualreg, .companyreg {
+        display: none;
+    }
+
+    .form {
+        display: none;
+        flex-direction: column;
+        width: 50%;
+        margin: 0 auto;
+        padding: 5px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
+</style>
+<div class="firststep" style="width:20%">
+
+    <button style="text-align:center" id="company">@SharedLocalizer["Company"]</button>
+    <button id="individual" style="margin-top:10px; text-align:center">@SharedLocalizer["Individual"]</button>
+</div>
+<div class="form" id="form">
+    @*
+    first step*@
+    <button style="display:none; border:none; background:none" id="back"><img src="~/img/back.png" style="width:30px; height:30px" /></button>
+
+    @*company*@
+    <div class="companyreg" id="companyreg">
+        <label style="text-align:center; font-size:16px">@SharedLocalizer["Company"]</label>
+        <label>@SharedLocalizer["Inn"]</label>
+        <div style="display:flex; flex-direction:row">
+            <input style="width:100%" type="number" id="inn" />
+            <button class="fa fa-search" id="checkInn"></button>
+        </div>
+        <label>@SharedLocalizer["CompanyName"]</label>
+        <input id="companyname" />
+
+        <label>@SharedLocalizer["Address"]</label>
+        <input id="address" />
+
+        <label>@SharedLocalizer["Email"]</label>
+        <input type="email" id="email" />
+
+        <label>@SharedLocalizer["PhoneNumber"]</label>
+        <input type="number" id="phone" />
+
+        <label style="text-align:center; font-size:16px">@SharedLocalizer["Representative"]</label>
+
+        <label>@SharedLocalizer["Name"]</label>
+        <input id="name" />
+
+        <label>@SharedLocalizer["Surname"]</label>
+        <input id="surname" />
+
+        <label>@SharedLocalizer["PersonalNumber"]</label>
+        <input id="personalid" />
+
+        <label>@SharedLocalizer["PhoneNumber"]</label>
+        <input type="number" id="phone1" />
+
+        <label>@SharedLocalizer["Additionalinfo"]</label>
+        <input id="additionalinfo" />
+
+        <button style="margin-top:10px; margin-bottom: 20px;" id="registrationincompany">@SharedLocalizer["Registration"]</button>
+        <button style="margin-top:10px; margin-bottom: 20px" class="btn hide" id="companypending">...</button>
+    </div>
+    @*individual*@
+    <div class="individualreg" id="individualreg">
+        <label style="text-align:center; font-size:16px">@SharedLocalizer["Individual"]</label>
+        <label>@SharedLocalizer["PersonalNumber"]</label>
+        <div style="display:flex; flex-direction:row">
+            <input style="width:100%" required id="personalid1" />
+            <button id="checkpersonalid" class="fa fa-search"></button>
+        </div>
+        <label>@SharedLocalizer["Name"]</label>
+        <input id="name1" />
+
+        <label>@SharedLocalizer["Surname"]</label>
+        <input id="surname1" />
+
+        <label>@SharedLocalizer["PhoneNumber"]</label>
+        <input type="number" id="phone2" />
+
+        <label>@SharedLocalizer["DatOfBirth"]</label>
+        <input type="date" id="bdate1" />
+
+        <label>@SharedLocalizer["Email"]</label>
+        <input type="email" id="email1" />
+
+        <label>@SharedLocalizer["Additionalinfo"]</label>
+        <input id="additionalinfo1" />
+
+        <button style="margin-top:10px; margin-bottom: 20px;" id="registrationindividual">@SharedLocalizer["Registration"]</button>
+        <button style="margin-top:10px; margin-bottom: 20px" class="btn hide" id="individualpending">...</button>
+    </div>
+</div>
+
+
+
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+    $("#company").click(function () {
+
+        document.getElementById('company').style.display = 'none'
+        document.getElementById('individual').style.display = 'none'
+        document.getElementById('back').style.display = 'flex'
+        document.getElementById('form').style.display = 'flex'
+        document.getElementById('companyreg').style.display = 'flex'
+        document.getElementById('individualreg').style.display = 'none'
+    })
+
+    $("#individual").click(function () {
+
+        document.getElementById('company').style.display = 'none'
+        document.getElementById('individual').style.display = 'none'
+        document.getElementById('back').style.display = 'flex'
+        document.getElementById('form').style.display = 'flex'
+        document.getElementById('companyreg').style.display = 'none'
+        document.getElementById('individualreg').style.display = 'flex'
+    })
+    $("#back").click(function () {
+        document.getElementById('form').style.display = 'none'
+        document.getElementById('company').style.display = 'block'
+        document.getElementById('individual').style.display = 'block'
+        document.getElementById('back').style.display = 'none'
+        document.getElementById('companyreg').style.display = 'none'
+        document.getElementById('individualreg').style.display = 'none'
+    })
+
+
+    $("#registrationindividual").click(function () {
+        if ($('#personalid1').val() == null || $('#personalid1').val() == "") {
+            document.getElementById('personalid1').style.borderColor = 'red'
+        }
+        else {
+            $('#individualpending').removeClass('hide');
+            $('#registrationindividual').addClass('hide');
+            setTimeout(() => {
+                var url = '@Url.Action("UserRegistration", "CashDesk")';
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    async: false,
+
+                    data: {
+                        "Name": $('#name1').val(),
+                        "Surname": $('#surname1').val(),
+                        "Phone": $('#phone2').val(),
+                        "PersonalID": $('#personalid1').val(),
+                        "Email": $('#email1').val(),
+                        "BDate": $('#bdate1').val(),
+                        "IsLegal": 0,
+                        "Description": $('#additionalinfo1').val()
+
+
+                    },
+                    cache: false,
+                    success: function (data) {
+
+
+                        if (data.actionResultCode == 200) {
+
+                            $('#individualpending').addClass('hide');
+                            $('#registrationindividual').removeClass('hide');
+                            location.href = '/CashDesk/GetUser?PersonalID=' + $('#personalid1').val();
+                        }
+                        else {
+                            $('#individualpending').addClass('hide');
+                            $('#registrationindividual').removeClass('hide');
+                            alert(data.actionResultMsg)
+                        }
+                    },
+
+                });
+            }, 500)
+        }
+    })
+
+
+    $("#registrationincompany").click(function () {
+        if ($('#personalid').val() == null || $('#personalid').val() == "") {
+            document.getElementById('personalid').style.borderColor = 'red'
+        }
+        if ($('#inn').val() == null || $('#inn').val() == "") {
+            document.getElementById('inn').style.borderColor = 'red'
+        }
+        else {
+            $('#companypending').removeClass('hide');
+            $('#registrationincompany').addClass('hide');
+            setTimeout(() => {
+                var url = '@Url.Action("UserRegistration", "CashDesk")';
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    async: false,
+
+                    data: {
+                        "Name": $('#name').val(),
+                        "Surname": $('#surname').val(),
+                        "Phone": $('#phone').val(),
+                        "PersonalID": $('#personalid').val(),
+                        "Email": $('#email').val(),
+                        "CompanyName": $('#companyname').val(),
+                        "Inn": $('#inn').val(),
+                        //  "BDate": $('#bdate').val(),
+                        "IsLegal": 1,
+                        "Address": $('#address').val(),
+                        "Phone1": $('#phone1').val(),
+                        "Description": $('#additionalinfo').val()
+
+
+                    },
+                    cache: false,
+                    success: function (data) {
+
+
+                        if (data.actionResultCode == 200) {
+
+                            $('#companypending').addClass('hide');
+                            $('#registrationincompany').removeClass('hide');
+                            location.href = '/CashDesk/GetUser?Inn=' + $('#inn').val();
+                        }
+                        else {
+                            alert(data.actionResultMsg)
+
+                            $('#companypending').addClass('hide');
+                            $('#registrationincompany').removeClass('hide');
+                        }
+                    },
+
+                });
+            }, 500)
+        }
+    })
+
+    $("#checkpersonalid").click(function () {
+
+        var url = '@Url.Action("CheckPerson", "CashDesk")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            data: {
+                "PersonalID": $("#personalid1").val(),
+            },
+            cache: false,
+            success: function (data) {
+
+                console.log(data)
+
+                document.getElementById('name1').value = data.name;
+                document.getElementById('surname1').value = data.surname;
+                document.getElementById('phone2').value = data.phone;
+                document.getElementById('bdate1').value = data.birthDate;
+                document.getElementById('email1').value = data.email;
+                document.getElementById('additionalinfo1').value = data.additionalInfo;
+
+
+            },
+            error: function () {
+                alert('Error');
+            },
+        });
+
+    });
+    $("#checkInn").click(function () {
+
+        var url = '@Url.Action("CheckPerson", "CashDesk")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+            data: {
+                "Inn": $("#inn").val(),
+            },
+            cache: false,
+            success: function (data) {
+
+                console.log(data)
+
+                document.getElementById('name').value = data.name;
+                document.getElementById('address').value = data.address;
+                document.getElementById('phone1').value = data.phone1;
+                document.getElementById('surname').value = data.surname;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('email').value = data.email;
+                document.getElementById('companyname').value = data.orgName;
+                document.getElementById('additionalinfo').value = data.additionalInfo;
+
+                //document.getElementById('birthdate').value = data.birthDate;
+
+            },
+            error: function () {
+                alert('Error');
+            },
+        });
+
+    });
+</script>

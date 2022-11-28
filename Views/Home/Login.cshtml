@@ -1,0 +1,110 @@
+﻿@using System.Security.Claims
+@inject IJsonHelper Json;
+@using System.Linq;
+@using WbApp.Helpers;
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@using System.Web;
+@using WbApp;
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+
+} 
+@model ActionResultModel
+
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="~/css/LoginStyle.css">
+<div style="display:flex;  background: white; height:80px; flex-direction:row">
+<div style="width:95%">
+   @* <img src=@SharedLocalizer["Unilogo"] /> *@
+        <img src="~/img/@SharedLocalizer["Unilogo"]" style="width: 110px; margin-top:10px; height: 55px; margin-left:20px">
+    </div>
+    <ul style="margin-top:10px;">
+        <li>@Html.ActionLink(linkText:"GE", actionName:"ChangeLanguage", controllerName:"Home", routeValues:new{language="ka", redirectUrl=""}, htmlAttributes:new{@class="langUrl", @id="ka" })</li>
+
+        <li>@Html.ActionLink(linkText:"EN", actionName:"ChangeLanguage", controllerName:"Home", routeValues:new{language="en", redirectUrl=""}, htmlAttributes:new{@class="langUrl", @id="en" })</li>
+
+    </ul>
+</div>
+
+
+<body style="background-color: #e7e7e7; margin:0">
+
+
+
+    <div class="loginform">
+        <div>
+            <button onclick="backtobranch(this)" id="backarrow" style="border:none; display:none; background:white"><img src="~/img/back.png" style="width:30px; height:30px" /></button>
+        </div>
+        <div style="margin:0 auto; margin-top:20px">
+            <img src="~/img/user.png" />
+        </div>
+        <div style="margin:0 auto">
+            <label style="font-size:24px">@SharedLocalizer["SignIn"]</label>
+        </div> 
+        <form method="post">
+            <div id="branchdiv" style="display:flex; flex-direction:column; width:80%; margin:0 auto">
+                <select id="branch" class="branchdropdown" onchange="changedropdown(this)" name="BranchID">
+                    <option disabled selected style="display:none" value="0">@SharedLocalizer["Branch"]</option>
+                    <option value="23">@SharedLocalizer["CityMallGldani"]</option>
+                    <option value="22">@SharedLocalizer["CityMallSaburtalo"]</option>
+                    <option value="21">@SharedLocalizer["TbilisiMall"]</option>
+                    <option value="25">@SharedLocalizer["VipAndCorp"]</option>
+                    <option value="24">@SharedLocalizer["Headoffice"]</option>
+                </select>
+
+            </div>
+            <div style="display:none" id="userdiv">
+
+                <div style="display:flex; flex-direction:column; width:80%; margin:0 auto">
+                    <input style="height:30px; margin-top:30px" readonly name="BranchName" id="branchvalue" />
+                    <input id="username" value="@Model?.UserName" style="height:30px; margin-top:5px" type="text" name="username" class="form-control" placeholder=@SharedLocalizer["Username"] required />
+                    <input id="password" style="height:30px; margin-top:5px" type="password" name="password" class="form-control" placeholder=@SharedLocalizer["Password"] required />
+                    <button class="loginbutton" type="submit">@SharedLocalizer["SignIn"]</button>
+                </div>
+            </div>
+        </form>
+
+        <label id="errortext" class="errortext">@Model?.ActionResultMsg</label>
+
+
+    </div>
+
+
+
+</body>
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script src="~/js/login.js"></script>
+ 
+<script>
+   
+    var urls = document.getElementsByClassName("langUrl")
+    var currenturl = location.href;
+    var newurl0 = urls[0] + "&redirectUrl=" + currenturl;
+    var newurl1 = urls[1] + "&redirectUrl=" + currenturl;
+    urls[0].href = newurl0;
+    urls[1].href = newurl1;
+
+
+    function backtobranch(e) {
+        document.getElementById('branchdiv').style.display = 'flex';
+        document.getElementById('backarrow').style.display = 'none'
+        document.getElementById('userdiv').style.display = 'none'
+        $("#branch").val([]);
+    }
+
+    function changedropdown(e) {
+        document.getElementById('branchdiv').style.display = 'none';
+        document.getElementById('userdiv').style.display = 'block'
+        document.getElementById('backarrow').style.display = 'block'
+        var a = $("#branch option:selected").text();
+        $("#errortext").text("");
+        document.getElementById("branchvalue").setAttribute('value', a);
+    }
+</script>

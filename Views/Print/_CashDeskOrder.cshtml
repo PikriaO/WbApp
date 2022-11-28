@@ -1,0 +1,203 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using WbApp.Services.GetPaymentDetails;
+@inject IJsonHelper Json;
+@{
+    ViewData["Title"] = "PaymentDetails";
+
+}
+@model PaymentDetailsModel   
+ 
+ 
+         @*   <div style="width:50%">
+           <button onclick="document.getElementById('backdrop').style.display = 'none'" id="closecashorder" style="float:left; margin-top:10px; margin-left:10px" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i></button>
+            </div>
+            <div style="float:right; width:50%">
+
+                <button id="printcashdeskorderbtn" style="float: right; margin-top: 10px;" onclick="printcashdeskorder()"><i class="fa fa-print" aria-hidden="true"></i></button>
+            </div>*@
+       
+        <div class="content">
+    <div style="display:flex; flex-direction:row; width:100%; height:75px; border-bottom: 1px solid">
+        <div>
+            <img src="/img/uninew_ge.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+        </div>
+        <div style="width:80%; text-align:center; ">
+            <label style="font-size:18px; margin-top:20px"><b>შემოსავლის ორდერი</b></label>
+        </div>
+        <div style="float:right">
+            <button id="printcashdeskorderbtn" style="float:right" onclick="printcashdeskorder()"><i class="fa fa-print" aria-hidden="true"></i></button>
+        </div>
+       
+
+    </div>
+            <div style="display:flex; flex-direction:column; margin-top:10px; margin-left:5px">
+                <div style="display:flex; flex-direction:row">
+                    <div style="margin-left:3%">
+                    <label>თარიღი<input style="margin-left:55px" readonly value="@Model.CreateDate" /></label>
+
+                    </div>
+                    <div style="margin-left:30px">
+                        <label>ფილიალი   <input readonly value="@Model.BranchName" /></label>
+
+                    </div>
+                </div>
+
+
+                <div style="display:flex; flex-direction:row">
+                    <div style="margin-left:3%">
+                        <label>სახელი   <input readonly style="margin-left:55px; width:197px" value="@Model.Name" /></label>
+
+                    </div>
+                    <div style="margin-left:30px">
+                        <label>გვარი  <input readonly style="width:197px; margin-left:27px" value="@Model.Surname" /></label>
+
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:row">
+                    <div style=" margin-left:3%">
+                        <label>პირადი ნომერი <input readonly style="margin-left:2px; width:197px" value="@Model.PersonID" /></label>
+
+                    </div>
+                    <div style="width:20%;margin-left:30px">
+                  <label>თანხა <input readonly style="width:65px; margin-left:26px; text-align:right" value="@Model.CAmount" /></label> 
+
+                    </div>
+                    <div style="width:20%;margin-left:10px">
+                        <label>ვალუტა   <input readonly style="width:60px" value="GEL" /></label>
+
+                    </div>
+                </div> 
+                <div style="width:100%; margin-left:3%">
+                    <label>დანიშნულება   <input readonly style="margin-left:13px; width:494px" value="თანხის შეტანა ანგარიშზე" /></label>
+
+                </div>
+    
+            </div>
+
+    <div style="display:flex; flex-direction:row; margin-left:3%; margin-top:15px">
+        <div style="margin-top:10px">
+            <div style="margin-top:10px">
+                <label>ოპერატორი ______________________</label>
+            </div>
+            <div style="margin-top:10px">
+                <label>მომხმარებელი ______________________</label>
+            </div>
+        </div>
+        <div style="margin-top: 10px; margin-left:110px">
+            <div style="display:flex; flex-direction:row; float:right">
+                <div style="display:flex; flex-direction:column">
+
+                    <div class="img">
+                        <img src="/img/logo-ge.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                    <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                        <label style="text-align:right">
+                            ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                            +99532 2 555 222 <br />
+                            info@unicard.ge
+                        </label>
+                    </div>
+                </div>
+                <div class="colors">
+                    <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+
+
+
+<div class="content" style="margin-top:100px; border-top:1px dotted">
+    <div style="display:flex; flex-direction:row; width:100%; height:75px; border-bottom: 1px solid">
+        <div>
+            <img src="/img/uninew_ge.png" style="height:63px;width:90px" alt="logo" class="logo-default">
+        </div>
+        <div style="width:80%; text-align:center; ">
+            <label style="font-size:18px; margin-top:20px"><b>შემოსავლის ორდერი</b></label>
+        </div>
+       
+
+
+    </div>
+    <div style="display:flex; flex-direction:column; margin-top:10px; margin-left:5px">
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-left:3%">
+                <label>თარიღი<input style="margin-left:55px" readonly value="@Model.CreateDate" /></label>
+
+            </div>
+            <div style="margin-left:30px">
+                <label>ფილიალი   <input readonly value="@Model.BranchName" /></label>
+
+            </div>
+        </div>
+
+
+        <div style="display:flex; flex-direction:row">
+            <div style="margin-left:3%">
+                <label>სახელი   <input readonly style="margin-left:55px; width:197px" value="@Model.Name" /></label>
+
+            </div>
+            <div style="margin-left:30px">
+                <label>გვარი  <input readonly style="width:197px; margin-left:27px" value="@Model.Surname" /></label>
+
+            </div>
+        </div>
+
+        <div style="display:flex; flex-direction:row">
+            <div style=" margin-left:3%">
+                <label>პირადი ნომერი <input readonly style="margin-left:2px; width:197px" value="@Model.PersonID" /></label>
+
+            </div>
+            <div style="width:20%;margin-left:30px">
+                <label>თანხა <input readonly style="width:65px; margin-left:26px; text-align:right" value="@Model.CAmount" /></label>
+
+            </div>
+            <div style="width:20%;margin-left:10px">
+                <label>ვალუტა   <input readonly style="width:60px" value="GEL" /></label>
+
+            </div>
+        </div>
+        <div style="width:100%; margin-left:3%">
+            <label>დანიშნულება   <input readonly style="margin-left:13px; width:494px" value="თანხის შეტანა ანგარიშზე" /></label>
+
+        </div>
+
+    </div>
+
+    <div style="display:flex; flex-direction:row; margin-left:3%; margin-top:15px">
+        <div style="margin-top:10px">
+            <div style="margin-top:10px">
+                <label>ოპერატორი ______________________</label>
+            </div>
+            <div style="margin-top:10px">
+                <label>მომხმარებელი ______________________</label>
+            </div>
+        </div>
+        <div style="margin-top: 10px; margin-left:110px">
+            <div style="display:flex; flex-direction:row; float:right">
+                <div style="display:flex; flex-direction:column">
+
+                    <div class="img">
+                        <img src="/img/logo-ge.png" style="height:30px;width:55px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                    </div>
+                    <div style="display:flex; flex-direction:column; font-size:10px; margin-right:10px; margin-top:10px" class="info">
+                        <label style="text-align:right">
+                            ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო <br />
+                            +99532 2 555 222 <br />
+                            info@unicard.ge
+                        </label>
+                    </div>
+                </div>
+                <div class="colors">
+                    <img src="/img/colorlogo.jpg" style="height:78px;width:18px; float:right; margin-right:10px" alt="logo" class="logo-default">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

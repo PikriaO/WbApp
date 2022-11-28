@@ -1,0 +1,51 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.VouchersTracking.VouchersList
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "VouchersbyFile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model GetVouchersListModel
+
+<a href="/CashDesk/VouchersPool">@SharedLocalizer["BackToMain"]</a>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<table style="margin-top:10px">
+    <tr>
+        
+        <th>@SharedLocalizer["VoucherCode"]</th>
+        <th>@SharedLocalizer["Amount"]</th>
+        <th>@SharedLocalizer["Date"]</th>
+        <th>@SharedLocalizer["Branch"]</th>
+        <th>@SharedLocalizer["FileName"]</th>
+    </tr>
+    @foreach (var i in Model.voucher)
+    {
+        <tr>
+            
+            <td>@i.Code</td>
+            <td>@i.Amount</td>
+            <td>@i.CreateDate.ToString("dd-MM-yyyy")</td>
+            <td>@i.BranchName</td>
+            <td>@i.FIleName</td>
+        </tr>
+    }
+</table>

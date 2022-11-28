@@ -1,0 +1,95 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.GetUser;
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "UsersList";
+}
+@model GetUserModel
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>
+ 
+ @if(Model.IsLegal==1){
+    <table style="width:100%">
+        <tr>
+            <th>@SharedLocalizer["CompanyName"]</th>
+            <th>@SharedLocalizer["Inn"]</th>
+            <th>@SharedLocalizer["Address"]</th>
+            <th>@SharedLocalizer["PhoneNumber"]</th>
+            <th>@SharedLocalizer["Email"]</th>
+            <th>@SharedLocalizer["AdditionalInfo"]</th>
+            <th>@SharedLocalizer["Representative"]</th>
+            <th>@SharedLocalizer["Details"]</th>
+        </tr>
+        @foreach (var a in Model.users)
+        {
+            <tr>
+                <td>@a.CompanyName</td>
+                <td>@a.Inn</td>
+                <td>@a.Address</td>
+                <td>@a.Phone</td>
+                <td>@a.Email</td>
+                <td>@a.AdditionalInfo</td>
+                <td>@a.Name @a.Surname @a.PersonalCode @a.Phone1</td>
+                <td>
+                    <a asp-controller="CashDesk" asp-action="GetUser" asp-route-IsLegal=@a.IsLegal asp-route-Inn=@a.Inn asp-route-PersonalID=@a.PersonalCode>@SharedLocalizer["Details"]</a>
+                </td>
+
+            </tr>
+        }
+    </table>
+ }
+ else{
+    <table style="width:100%">
+        <tr>
+            <th>@SharedLocalizer["Name"]</th>
+            <th>@SharedLocalizer["Surname"]</th> 
+            <th>@SharedLocalizer["PeronalNumber"]</th> 
+            <th>@SharedLocalizer["PhoneNumber"]</th> 
+            <th>@SharedLocalizer["Email"]</th> 
+            <th>@SharedLocalizer["DatOfBirth"]</th>
+            <th>@SharedLocalizer["AdditionalInfo"]</th>
+            <th>@SharedLocalizer["Details"]</th>
+        </tr>
+        @foreach (var a in Model.users)
+        {
+            <tr>
+                <td>@a.Name</td>
+                <td>@a.Surname</td>
+                <td>@a.PersonalCode</td>
+                <td>@a.Phone</td>
+                <td>@a.Email</td> 
+                <td>@a.BDate</td> 
+                <td>@a.AdditionalInfo</td>
+                <td>
+                    <a asp-controller="CashDesk" asp-action="GetUser" asp-route-IsLegal=@a.IsLegal asp-route-Inn=@a.Inn asp-route-PersonalID=@a.PersonalCode>@SharedLocalizer["Details"]</a>
+                </td>
+            </tr>
+        }
+    </table>
+ }
+
+ <script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+   
+  
+    </script>
+
+
+ 
+            

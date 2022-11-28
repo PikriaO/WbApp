@@ -1,0 +1,472 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq
+@using WbApp.Services.CashDesk
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@using System.Web;
+@using WbApp;
+@inject IJsonHelper Json
+@{
+    ViewData["Title"] = "CashDeskTransactions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model CashDeskTransactionsModel
+<a href="/Home/Index" style="color:black"><img src="/img/home.png" style="height:20px;width:20px"><u>@SharedLocalizer["BackToMain"]</u></a>
+
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+</style>
+<div style="display:flex; flex-direction:row; margin-top:20px">
+    <div>
+        <table style="width:100%">
+            <tr style=" background-color: #dddddd">
+                <th style="padding:0">@SharedLocalizer["CashBalance"]</th>
+            </tr>
+            <tr>
+                <td style="padding:0; text-align:right">@Model.CBalance ₾</td>
+            </tr>
+        </table>
+    </div>
+    <div style="width:60% ; margin: 0 auto">
+        <form asp-controller="CashDesk" asp-action="GetCashDeskTransactions" method="get" class="parent">
+
+            <label>@SharedLocalizer["StartDate"]</label>
+            <input value="@Model.StartDate" type="date" name="startDate" />
+            <label>@SharedLocalizer["EndDate"]</label>
+            <input value="@Model.EndDate" type="date" name="endDate" />
+            <input hidden name="BranchID" value="@Model.BranchID" />
+            <button type="submit">@SharedLocalizer["Search"]</button>
+        </form>
+    </div>
+    @if (Model.BranchID == Convert.ToInt32(User.Claims.Where(a => a.Type == ClaimTypes.Sid).Select(u => u.Value).FirstOrDefault()))
+    {
+        <div>
+            <button id="closecashdesk" data-toggle="modal" data-target="#closecash">@SharedLocalizer["CashClose"]</button>
+            <button id="fillcashdesk" data-toggle="modal" data-target="#fillcash">@SharedLocalizer["CashEnchashment"]</button>
+        </div>
+    }
+</div>
+<div style="margin-top:10px; display:flex; flex-direction:row">
+    <div style="margin-top:10px">
+        <table>
+            <tr style="background-color: #dddddd;">
+                <th style="padding:0; padding-right: 10px;">@SharedLocalizer["Cashless"]</th>
+                <th style="padding:0">@SharedLocalizer["Amount"]</th>
+            </tr>
+            <tr>
+                <td style="padding:0; text-align:right">@Model.TAmount ₾</td>
+                <td>@Model.CountTerminal</td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top:10px; margin-left:10px">
+        <table>
+            <tr style="background-color: #dddddd;">
+                <th style="padding:0; padding-right: 10px;">@SharedLocalizer["CashAmount"]</th>
+                <th style="padding:0">@SharedLocalizer["Amount"]</th>
+            </tr>
+            <tr>
+                <td style="padding:0; text-align:right">@Model.CAmount ₾</td>
+                <td>@Model.CountCash</td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top:10px; margin-left:10px">
+        <table>
+            <tr style="background-color: #dddddd;">
+                <th style="padding:0; padding-right: 10px;">@SharedLocalizer["BankTransfer"]</th>
+                <th style="padding:0">@SharedLocalizer["Amount"]</th>
+            </tr>
+            <tr>
+                <td style="padding:0; text-align:right">@Model.BAmount ₾</td>
+                <td>@Model.CountBank</td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top:10px; margin-left:10px">
+        <table>
+            <tr style="background-color: #dddddd;">
+                <th style="padding:0; padding-right: 10px;">@SharedLocalizer["TotalAmount"]</th>
+                <th style="padding:0">@SharedLocalizer["Amount"]</th>
+            </tr>
+            <tr>
+                <td style="padding:0; text-align:right">@Model.SAmount ₾</td>
+                <td>@Model.CountSum</td>
+            </tr>
+        </table>
+    </div>
+</div>
+@try
+{
+    @if (Model.cashTransactions.Count() > 0)
+    {
+        <div id="cashdiv" style="margin-top:10px; height: 70px; content-visibility:auto;">
+            <table>
+                <tr style="background-color: #dddddd;">
+                    <th style="padding:0">@SharedLocalizer["Description"]</th>
+                    <th style="padding:0">@SharedLocalizer["Amount"]</th>
+                    <th style="padding:0">@SharedLocalizer["Operator"]</th>
+                    <th style="padding:0">
+                        @SharedLocalizer["Date"]
+                        <button id="minimize" style="display:none; border:none; background:none; margin-right:10px; float:right"> <img src="/img/arrowmin.png" style="height:20px;width:20px"> </button>
+                        <button id="maximize" style="float:right; border:none; background:none; margin-right:10px"> <img src="/img/arrowmax.png" style="height:20px;width:20px"></button>
+                    </th>
+                </tr>
+                @try
+                {
+                    @foreach (var a in Model.cashTransactions)
+                    {
+                        <tr>
+                            <td style="padding:0">@a.Description</td>
+                            <td style="padding:0; text-align:right; padding-right:10px">@a.CAmount ₾</td>
+                            <td style="padding:0">@a.OperatorName</td>
+                            <td style="padding:0">@a.CreateDate</td>
+
+                        </tr>
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+
+            </table>
+        </div>
+    }
+}
+catch (Exception e)
+{
+
+}
+<div style="margin-top:10px">
+    <table>
+        <tr style=" background-color: #dddddd;">
+            <th>@SharedLocalizer["Customer"]</th>
+            <th>@SharedLocalizer["Cashless"]</th>
+            <th>@SharedLocalizer["CashAmount"]</th>
+            <th>@SharedLocalizer["BankTransfer"]</th>
+            <th>@SharedLocalizer["Date"]</th>
+            <th>@SharedLocalizer["Operator"]</th>
+            <th>@SharedLocalizer["Details"]</th>
+        </tr>
+        @try
+        {
+            @foreach (var a in Model.transactions)
+            {
+                <tr>
+                    <td>@a.Name @a.Surname</td>
+                    <td style="text-align:right">@a.TAmount ₾</td>
+                    <td style="text-align:right">@a.CAmount ₾</td>
+                    <td style="text-align:right">@a.BAmount ₾</td>
+                    <td>@a.CreateDate</td>
+                    <td>@a.OperatorName</td>
+                    <td><a href="/CashDesk/GetPaymentDetails?PaymentID=@a.PaymentID&BranchID=@Model.BranchID&Start=@Model.StartDate&End=@Model.EndDate">@SharedLocalizer["Details"]</a></td>
+                </tr>
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+
+    </table>
+</div>
+
+
+
+<div data-backdrop="static" class="modal fade" id="fillcash" tabindex="-1" role="dialog" aria-labelledby="fillcashdeskmodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content">
+            <div class="modal-header">
+
+                <div style="display:flex; flex-direction:column">
+                    <div style="display:flex; flex-direction:row; width:100%">
+                        <label>@SharedLocalizer["CashEnchashment"]</label>
+                        <div style="width:76%">
+                            <button id="closeord" data-dismiss="modal" aria-label="Close" style="float:right" aria-hidden="true">X</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-body" style="display:flex; flex-direction:column">
+                    <div style="display:flex; flex-direction:column">
+                        <div style="display:flex; flex-direction:column; width:30%; margin: 0 auto">
+                            <label>@SharedLocalizer["Amount"]</label>
+                            <input type="number" id="fillamount" />
+                            <button style="border:none; background:none" id="fillorder">@SharedLocalizer["IncomeReceipt"]</button>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="width:100%; margin-top:10px">
+                        <button disabled id=confirmfill>@SharedLocalizer["Approve"]</button>
+                        <button style="width:100px; text-align:center" class="btn hide" id="perdingfill">...</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div data-backdrop="static" class="modal fade" id="closecash" tabindex="-1" role="dialog" aria-labelledby="closecashdeskmodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex; flex-direction:column">
+                    <div style="display:flex; flex-direction:row; width:100%">
+                        <label>@SharedLocalizer["CashClose"]</label>
+                        <div style="width:76%">
+                            <button id="closeord" data-dismiss="modal" aria-label="Close" style="float:right" aria-hidden="true">X</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-body" style="display:flex; flex-direction:column">
+                    <div style="display:flex; flex-direction:column">
+                        <div style="display:flex; flex-direction:column; width:30%; margin: 0 auto">
+                            <label>@SharedLocalizer["Amount"]</label>
+                            <input type="number" id="closeamount" />
+                            <button style="border:none; background:none" id="closeorder"><u>@SharedLocalizer["WithdrawalReceipt"]</u></button>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="width:100%; margin-top:10px">
+                        <button disabled id=confirmclose>@SharedLocalizer["Approve"]</button>
+                        <button style="width:100px; text-align:center" class="btn hide" id="perdingclose">...</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="closeprint" tabindex="-1" role="dialog" aria-labelledby="closeprint" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="regcontent" style="width: 730px">
+            <div class="modal-body">
+                <partial name="~/Views/Print/_CloseCshDeskOrder.cshtml" model="@Model" />
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fillprint" tabindex="-1" role="dialog" aria-labelledby="fillprint" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="regcontent" style="width: 730px">
+            <div class="modal-body">
+                <partial name="~/Views/Print/_FillCashDeskOrder.cshtml" model="@Model" />
+
+            </div>
+        </div>
+    </div>
+</div>
+<input hidden value="@SharedLocalizer["PleaseFillAmountFields"]" id="error" />
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+
+    $("#maximize").click(function () {
+
+        document.getElementById('cashdiv').style.height = '100%'
+        document.getElementById('maximize').style.display = 'none'
+        document.getElementById('minimize').style.display = 'block'
+    })
+    $("#minimize").click(function () {
+
+        document.getElementById('cashdiv').style.height = '70px'
+        document.getElementById('maximize').style.display = 'block'
+        document.getElementById('minimize').style.display = 'none'
+    })
+    $("#fillorder").click(function () {
+       
+        if ($('#fillamount').val() == null || $('#fillamount').val() == '') {
+            alert($('#error').val())
+        }
+        else {
+            document.getElementById('confirmfill').removeAttribute('disabled')
+            var amount = $('#fillamount').val();
+            var a = parseFloat(amount).toFixed(2)
+            $("#fillorderamount").val(a);
+            $("#fillorderamount1").val(a);
+
+            $('#fillprint').modal('show');
+        }
+    })
+    $("#closeorder").click(function () {
+        if ($('#closeamount').val() == null || $('#closeamount').val() == '') {
+            alert($('#error').val())
+        }
+        else {
+            document.getElementById('confirmclose').removeAttribute('disabled')
+            var amount = $('#closeamount').val();
+            var a = parseFloat(amount).toFixed(2)
+            $("#closeorderamount").val(a);
+            $("#closeorderamount1").val(a);
+
+            $('#closeprint').modal('show');
+        }
+    })
+
+    function printclose() {
+
+        document.getElementById('printcloseorder').style.display = 'none';
+
+
+        var printContents = document.getElementById('closeprint').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            document.getElementById('printcloseorder').style.display = 'block';
+
+
+        }, 1000)
+    }
+    function printfill() {
+
+        document.getElementById('printfillorder').style.display = 'none';
+
+
+        var printContents = document.getElementById('fillprint').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            document.getElementById('printfillorder').style.display = 'block';
+
+
+        }, 1000)
+    }
+
+    $("#confirmfill").click(function () {
+
+        if ($('#fillamount').val() == null || $('#fillamount').val() == '') {
+             alert($('#error').val())
+        }
+        else {
+            $('#perdingfill').removeClass('hide');
+            $('#confirmfill').addClass('hide');
+            setTimeout(() => {
+                var url = '@Url.Action("CloseFillCashDesk", "CashDesk")';
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    async: false,
+
+                    data: {
+
+                        "Amount": $('#fillamount').val(),
+                        "OpType": 1,
+
+                    },
+                    cache: false,
+                    success: function (data) {
+
+                        $('#perdingfill').addClass('hide');
+                        $('#confirmfill').removeClass('hide');
+                        if (data.actionResultCode == 200) {
+                            alert(data.actionResultMsg)
+                            window.location.reload()
+                        }
+                        else {
+                            alert(data.actionResultMsg)
+                        }
+                    },
+
+                });
+            }, 500)
+        }
+    })
+
+    $("#confirmclose").click(function () {
+
+        if ($('#closeamount').val() == null || $('#closeamount').val() == '') {
+              alert($('#error').val())
+        }
+        else {
+            $('#perdingclose').removeClass('hide');
+            $('#confirmclose').addClass('hide');
+            setTimeout(() => {
+                var url = '@Url.Action("CloseFillCashDesk", "CashDesk")';
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    async: false,
+
+                    data: {
+
+                        "Amount": $('#closeamount').val(),
+                        "OpType": 0,
+
+                    },
+                    cache: false,
+                    success: function (data) {
+                        $('#perdingclose').addClass('hide');
+                        $('#confirmclose').removeClass('hide');
+                        if (data.actionResultCode == 200) {
+                            alert(data.actionResultMsg)
+                            window.location.reload()
+                        }
+                        else {
+                            alert(data.actionResultMsg)
+                        }
+                    },
+
+                });
+            }, 500)
+        }
+    })
+</script>

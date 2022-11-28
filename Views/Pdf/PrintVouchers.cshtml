@@ -1,0 +1,114 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq; 
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "PrintVouchers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model PdfData
+
+<div> 
+       @* <div style="display:flex; flex-direction:column; width:15%; margin: 0 auto">
+            <lanel>ვაუჩერის დიზაინი</lanel>
+            <select style="height:25px; width:190px" onchange="checkcolor(this)">
+                <option value="1">შავი</option>
+                <option value="2">თეთრი</option>
+            </select>
+        </div> *@
+    <div>
+        <div id="newvoucherback" style="display:block; margin-top:20px">
+            <div style="display:flex; flex-direction:column; margin-top:10px; margin:0 auto; width:15%">
+                <form asp-action="ExportToPdf" method="post" id="backform" enctype="multipart/form-data">
+                    <input id="file" style="margin-top:10px" type="file" name="file" class="custom-file-input" />
+                    <button style="margin-top:10px; width:190px" onclick="backloader()" id="back">@SharedLocalizer["BackSide"]</button>
+                </form>
+                <button style="margin-top:10px; width:190px; display:none" id="backload">...</button>
+
+            </div>
+        </div>
+    </div>
+    <div>
+        <div id="newvoucherfrontblack" style="display:flex; flex-direction:column; margin-top:10px; margin:0 auto; width:15%; margin-top:20px">
+            <form asp-action="ExportToPdfBackSide" id="frontformblack" method="post" enctype="multipart/form-data">
+                <input id="file" style="margin-top:10px" type="file" name="file" class="custom-file-input" />
+                <button style="margin-top:10px; width:190px" onclick="blackloader()" id="black" type="submit">@SharedLocalizer["FrontSide"]</button>
+                <input hidden name="color" value="1" />
+            </form>
+            <button style="margin-top:10px; width:190px; display:none" id="blackload">...</button>
+
+        </div>
+    </div>
+    <div>
+        <div id="newvoucherfrontwhite" style="display:flex; flex-direction:column; margin-top:10px; margin:0 auto; width:15%; margin-top:20px; display:none">
+            <form asp-action="ExportToPdfBackSide" id="frontformwhite" method="post" enctype="multipart/form-data">
+                <input id="file" style="margin-top:10px" type="file" name="file" class="custom-file-input" />
+                <button style="margin-top:10px; width:190px" onclick="whiteloader()" id="white" type="submit">@SharedLocalizer["FrontSide"]</button>
+                <input hidden name="color" value="2" />
+            </form>
+            <button style="margin-top:10px; width:190px; display:none" id="whiteload">...</button>
+
+        </div>
+    </div>
+</div>
+
+ 
+ 
+
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+  
+    function backloader(e) {
+        
+        document.getElementById('back').style.display = 'none';
+        document.getElementById('backload').style.display = 'block';
+         setTimeout(() => {
+            document.getElementById('back').style.display = 'block';
+            document.getElementById('backload').style.display = 'none';
+        },5000)
+    } 
+    function blackloader(e) {
+        
+        document.getElementById('black').style.display = 'none';
+        document.getElementById('blackload').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('black').style.display = 'block';
+            document.getElementById('blackload').style.display = 'none';
+        }, 5000)
+    } 
+    function whiteloader(e) {
+        
+        document.getElementById('white').style.display = 'none';
+        document.getElementById('whiteload').style.display = 'block';
+        setTimeout(() => {
+        document.getElementById('white').style.display = 'block';
+        document.getElementById('whiteload').style.display = 'none';
+        }, 5000)
+    }
+    function checkcolor(e) {
+        if(e.value==1){
+            document.getElementById('newvoucherfrontblack').style.display = 'block';
+            document.getElementById('newvoucherfrontwhite').style.display = 'none';
+        }
+        
+        else{
+        document.getElementById('newvoucherfrontblack').style.display = 'none'; 
+        document.getElementById('newvoucherfrontwhite').style.display = 'block';
+        }
+
+    }
+
+
+  
+</script>
+
+
+
+      

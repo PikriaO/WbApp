@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActivationDate" xml:space="preserve">
+    <value>აქტივაციის თარიღი</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>დამატება</value>
+  </data>
+  <data name="Additionalinfo" xml:space="preserve">
+    <value>დამატებითი ინფორმაცია</value>
+  </data>
+  <data name="AddNewVoucher" xml:space="preserve">
+    <value>ვაუჩერების დამატება</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>მისამართი</value>
+  </data>
+  <data name="AddVouchers" xml:space="preserve">
+    <value>ახალი ვაუჩერების დამატება</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>თანხა</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>დადასტურება</value>
+  </data>
+  <data name="BackSide" xml:space="preserve">
+    <value>უკანა გვერდი</value>
+  </data>
+  <data name="BackToMain" xml:space="preserve">
+    <value>მთავარ გვერდზე დაბრუნება</value>
+  </data>
+  <data name="BankTransfer" xml:space="preserve">
+    <value>საბანკო გადარიცხვის თანხა</value>
+  </data>
+  <data name="Branch" xml:space="preserve">
+    <value>ფილიალი</value>
+  </data>
+  <data name="Calc" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CashAmount" xml:space="preserve">
+    <value>ნაღდი ანგარიშსწორების თანხა</value>
+  </data>
+  <data name="CashBalance" xml:space="preserve">
+    <value>სალაროს ნაშთი</value>
+  </data>
+  <data name="CashClose" xml:space="preserve">
+    <value>სალაროს დახურვა</value>
+  </data>
+  <data name="Cashdesk" xml:space="preserve">
+    <value>სალარო</value>
+  </data>
+  <data name="CashDeskAccount" xml:space="preserve">
+    <value>სალაროს ანგარიში</value>
+  </data>
+  <data name="CashEnchashment" xml:space="preserve">
+    <value>სალაროს გამაგრება</value>
+  </data>
+  <data name="Cashless" xml:space="preserve">
+    <value>უნაღდო ანგარიშსწორების თანხა</value>
+  </data>
+  <data name="Ccy" xml:space="preserve">
+    <value>ვალუტა</value>
+  </data>
+  <data name="ChangeDate" xml:space="preserve">
+    <value>ცვლილების თარიღი</value>
+  </data>
+  <data name="Check" xml:space="preserve">
+    <value>შემოწმება</value>
+  </data>
+  <data name="CityMallGldani" xml:space="preserve">
+    <value>სითი მოლი გლდანი</value>
+  </data>
+  <data name="CityMallSaburtalo" xml:space="preserve">
+    <value>სითი მოლი საბურთალო</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>იურიდიული პირი</value>
+  </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>ორგანიზაციის დასახელება</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>დადასტურება</value>
+  </data>
+  <data name="CurrentPrice" xml:space="preserve">
+    <value>მიმდინარე ფასი</value>
+  </data>
+  <data name="CurrentTran" xml:space="preserve">
+    <value>მიმდინარე ტრანზაქციები</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>მომხმარებელი</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>კლიენტები</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>თარიღი</value>
+  </data>
+  <data name="DatOfBirth" xml:space="preserve">
+    <value>დაბადების თარიღი</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>დანიშნულება</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>დეტალები</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>ელ-ფოსტა</value>
+  </data>
+  <data name="En" xml:space="preserve">
+    <value>ინგლისური</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>საბოლოო თარიღი</value>
+  </data>
+  <data name="Fee" xml:space="preserve">
+    <value>საკომისიო</value>
+  </data>
+  <data name="FeePercent" xml:space="preserve">
+    <value>საკომისიოს პროცენტი</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>ფაილის სახელი</value>
+  </data>
+  <data name="FrontSide" xml:space="preserve">
+    <value>წინა გვერდი</value>
+  </data>
+  <data name="GetCode" xml:space="preserve">
+    <value>კოდის მიღება</value>
+  </data>
+  <data name="Handover" xml:space="preserve">
+    <value>მიღება-ჩაბარების აქტი</value>
+  </data>
+  <data name="HeadOffice" xml:space="preserve">
+    <value>სათავო ოფისი</value>
+  </data>
+  <data name="HeadOfficeAdress" xml:space="preserve">
+    <value>ვაჟა ფშაველას გამზ: N71, თბილისი 0186, საქართველო</value>
+  </data>
+  <data name="IncomeReceipt" xml:space="preserve">
+    <value>შემოსავლის ორდერი</value>
+  </data>
+  <data name="IncompleteTran" xml:space="preserve">
+    <value>დაუსრულებელი ტრანზაქციები</value>
+  </data>
+  <data name="Individual" xml:space="preserve">
+    <value>ფიზიკური პირი</value>
+  </data>
+  <data name="Inn" xml:space="preserve">
+    <value>საიდენთიფიკაციო კოდი</value>
+  </data>
+  <data name="Ka" xml:space="preserve">
+    <value>ქართული</value>
+  </data>
+  <data name="LanguageIncorrect" xml:space="preserve">
+    <value>ენის ფორმატი არასწორია</value>
+  </data>
+  <data name="MoveToAnotherBranch" xml:space="preserve">
+    <value>სხვა ფილიალში გაგზავნა</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>სახელი</value>
+  </data>
+  <data name="NewCode" xml:space="preserve">
+    <value>ახალი კოდი</value>
+  </data>
+  <data name="NewPayment" xml:space="preserve">
+    <value>ახალი ტრანზაქცია</value>
+  </data>
+  <data name="NewPrice" xml:space="preserve">
+    <value>ახალი ფასი</value>
+  </data>
+  <data name="OldPrice" xml:space="preserve">
+    <value>ძველი ფასი</value>
+  </data>
+  <data name="Operator" xml:space="preserve">
+    <value>ოპერატორი</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>შეკვეთის ნომერი</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>პაროლი</value>
+  </data>
+  <data name="PersonalNumber" xml:space="preserve">
+    <value>პირადი ნომერი</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>მობილური</value>
+  </data>
+  <data name="PleaseFillAmountFields" xml:space="preserve">
+    <value>გთხოვთ შეავსოთ თანხის ველი</value>
+  </data>
+  <data name="PleaseFillCode" xml:space="preserve">
+    <value>გთხოვთ შეავსოთ ვაუჩერის ნომერი</value>
+  </data>
+  <data name="PleaseFillFields" xml:space="preserve">
+    <value>გთხოვთ შეავსოთ ყველა ველი</value>
+  </data>
+  <data name="PleaseFillQuantity" xml:space="preserve">
+    <value>გთხოვთ შეასოთ ვაუჩერების რაოდენობა</value>
+  </data>
+  <data name="PriceCalc" xml:space="preserve">
+    <value>ფასის კალკულატორი</value>
+  </data>
+  <data name="PrintVouchers" xml:space="preserve">
+    <value>ვაუჩერების ბეჭდვა</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>რაოდენობა</value>
+  </data>
+  <data name="Rate" xml:space="preserve">
+    <value>კურსი</value>
+  </data>
+  <data name="Registration" xml:space="preserve">
+    <value>რეგისტრაცია</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>რეპორტი</value>
+  </data>
+  <data name="Representative" xml:space="preserve">
+    <value>კომპანიის წარმომადგენელი</value>
+  </data>
+  <data name="SalesPrice" xml:space="preserve">
+    <value>გასაყიდი ფასი</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>ცვლილებების შენახვა</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>ძებნა</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>პარამეტრები</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>ავტორიზაცია</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>საწყისი თარიღი</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>სტატუსი</value>
+  </data>
+  <data name="Surname" xml:space="preserve">
+    <value>გვარი</value>
+  </data>
+  <data name="TbilisiMall" xml:space="preserve">
+    <value>თბილისი მოლი</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>ჯამური თანხა</value>
+  </data>
+  <data name="TotalAmountIncorrect" xml:space="preserve">
+    <value>ჯამური თანხა არ არის სწორი</value>
+  </data>
+  <data name="TotalSum" xml:space="preserve">
+    <value>ჯამური რაოდენობა</value>
+  </data>
+  <data name="Tracking" xml:space="preserve">
+    <value>თრექინგი</value>
+  </data>
+  <data name="TransitAccount" xml:space="preserve">
+    <value>სატრანზიტო ანგარიში</value>
+  </data>
+  <data name="Unilogo" xml:space="preserve">
+    <value>logo-ge.png</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>ატვირთვა</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>მომხმარებელი</value>
+  </data>
+  <data name="VipAndCorp" xml:space="preserve">
+    <value>VIP &amp; Corporate</value>
+  </data>
+  <data name="VoucherCode" xml:space="preserve">
+    <value>ვაუჩერის ნომერი</value>
+  </data>
+  <data name="Vouchers" xml:space="preserve">
+    <value>ვაუჩერები</value>
+  </data>
+  <data name="VouchersCountIncorrect" xml:space="preserve">
+    <value>ვაუჩერების რაოდენობა არ არის სწორი</value>
+  </data>
+  <data name="VoucherUsed" xml:space="preserve">
+    <value>ვაუჩერი უკვე გამოყენებულია</value>
+  </data>
+  <data name="WithdrawalReceipt" xml:space="preserve">
+    <value>გასავლის ორდერი</value>
+  </data>
+</root>

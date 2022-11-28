@@ -1,0 +1,276 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.GetPaymentDetails;
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "PaymentDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model PaymentDetailsModel
+
+
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<div style="display:flex; flex-direction:column">
+    <a style="color:black" href="/CashDesk/GetCashDeskTransactions?startDate=@Model.start&endDate=@Model.end&BranchID=@Model.BranchID"><img src="/img/home.png" style="height:20px;width:20px"><u>მთავარ გვერდზე დაბრუნება</u></a>
+    <div style="display:flex; flex-direction:row; margin-top:10px">
+        <button style="border-radius:5px; border:1px solid" data-toggle="modal" data-target="#order">@SharedLocalizer["Handover"]</button> 
+        @if (@Model.CashAmount > 0)
+        {
+            <button style="border-radius:5px; border: 1px solid; margin-left:5px" id="cashdeskorderforvoucher">@SharedLocalizer["IncomeReceipt"]</button>
+        }
+    </div>
+</div>
+
+
+<table style="margin-top:10px">
+    <tr>
+        <th>@SharedLocalizer["Name"]</th>
+        <th>@SharedLocalizer["Surname"]</th>
+        <th>@SharedLocalizer["PersonalNumber"]</th>
+        <th>@SharedLocalizer["DatOfBirth"]</th>
+        <th>@SharedLocalizer["PhoneNumber"]</th>
+    </tr>
+    <tr>
+        <td>@Model.Name</td>
+        <td>@Model.Surname</td>
+        <td>@Model.PersonID</td>
+        <td>@Model.BirthDate.ToString("dd-MM-yyyy")</td>
+        <td>@Model.Phone</td>
+    </tr>
+</table>
+
+
+<table style="margin-top:10px">
+    <tr>
+        <th>@SharedLocalizer["Quantity"]</th>
+        <th>@SharedLocalizer["Date"]</th>
+        <th>@SharedLocalizer["Cashless"]</th>
+        <th>@SharedLocalizer["CashAmount"]</th>
+        <th>@SharedLocalizer["BankTransfer"]</th>
+        <th>@SharedLocalizer["TotalAmount"]</th>
+    </tr>
+    @try
+    {
+        <tr>
+
+            <td>@Model.details.Count()</td>
+            <td>@Model.CreateDate</td>
+            <td style="text-align:right">@Model.TAmount</td>
+            <td style="text-align:right">@Model.CAmount</td>
+            <td style="text-align:right">@Model.BAmount</td>
+            <td style="text-align:right">@Model.SAmount</td>
+        </tr>
+    }
+    catch (Exception e)
+    {
+        <tr>
+
+            <td></td>
+            <td>@Model.CreateDate</td>
+            <td style="text-align:right">@Model.TAmount</td>
+            <td style="text-align:right">@Model.CAmount</td>
+            <td style="text-align:right">@Model.BAmount</td>
+            <td style="text-align:right">@Model.SAmount</td>
+        </tr>
+    }
+</table>
+
+
+<table style="margin-top:10px; width:50%">
+    <tr>
+        <th>@SharedLocalizer["VoucherCode"]</th>
+        <th>@SharedLocalizer["Price"]</th>
+    </tr>
+    @try
+    {
+        @foreach (var i in Model.details)
+        {
+            <tr>
+                <td>@i.Code</td>
+                <td style="text-align:right">@i.ConvertedAmount</td>
+
+            </tr>
+        }
+    }
+    catch (Exception e)
+    {
+        <tr>
+            <td> </td>
+            <td> </td>
+
+        </tr>
+    }
+</table>
+
+
+
+<div class="modal fade" id="order" tabindex="-1" role="dialog" aria-labelledby="order" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="regcontent" style="width: 730px">
+
+            <div class="modal-body">
+                <partial name="~/Views/Print/_WbHandover.cshtml" model="@Model" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="orderen" tabindex="-1" role="dialog" aria-labelledby="orderen" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="regcontent" style="width: 730px">
+
+            <div class="modal-body">
+                <partial name="~/Views/Print/_WbHandover_en.cshtml" model="@Model" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="cashdeskorder" tabindex="-1" role="dialog" aria-labelledby="cashdeskorder" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="regcontent" style="width: 730px">
+            <div class="modal-body">
+                <partial name="~/Views/Print/_CashDeskOrder.cshtml" model="@Model" />
+
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<link href="~/lib/Swal/dist/sweetalert2.css" rel="stylesheet" />
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+
+    function printcashdeskorder() {
+
+        document.getElementById('printcashdeskorderbtn').style.display = 'none';
+
+        var printContents = document.getElementById('cashdeskorder').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            document.getElementById('printcashdeskorderbtn').style.display = 'block';
+
+
+
+        }, 1000)
+    }
+    $("#cashdeskorderforvoucher").click(function () {
+
+        $('#cashdeskorder').modal('show');
+    })
+    $("#handoverge").click(function () {
+
+        $('#orderen').modal('show');
+        $('#order').modal('hide');
+    })
+    $("#handoveren").click(function () {
+
+        $('#order').modal('show');
+        $('#orderen').modal('hide');
+    })
+
+
+    function printreg() {
+
+        //  document.getElementById('closeregmodal').style.display = 'none';
+        document.getElementById('printregbtn').style.display = 'none';
+        document.getElementById('handoverge').style.display = 'none';
+        var printContents = document.getElementById('order').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            //    document.getElementById('closeregmodal').style.display = 'block';
+            document.getElementById('printregbtn').style.display = 'block';
+            document.getElementById('handoverge').style.display = 'block';
+        }, 1000)
+
+
+    }
+    function printregen() {
+
+        //  document.getElementById('closeregmodal').style.display = 'none';
+        document.getElementById('printregbtnen').style.display = 'none';
+        document.getElementById('handoveren').style.display = 'none';
+        var printContents = document.getElementById('orderen').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            //    document.getElementById('closeregmodal').style.display = 'block';
+            document.getElementById('printregbtnen').style.display = 'block';
+            document.getElementById('handoveren').style.display = 'block';
+        }, 1000)
+
+
+    }
+</script>

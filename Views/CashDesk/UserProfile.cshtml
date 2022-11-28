@@ -1,0 +1,450 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using WbApp.Services.GetUser;
+@inject IJsonHelper Json;
+@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+@{
+    ViewData["Title"] = "UserProfile";
+}
+@model GetUserModel
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }
+    th{
+        width:250px;
+    }
+
+</style>
+<input hidden id="client" value="@Model.users.FirstOrDefault().ClientID" />
+
+@if (Model.IsLegal == 1)
+{
+    <div class="company">
+        <label style="text-align:center; font-size:16px">@SharedLocalizer["Company"]</label>
+        <table style="width:100%">
+            <tr>
+                <th>@SharedLocalizer["CompanyName"]:</th>
+                <td>@Model.users.FirstOrDefault().CompanyName</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Inn"]:</th>
+                <td>@Model.users.FirstOrDefault().Inn</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Address"]:</th>
+                <td>@Model.users.FirstOrDefault().Address</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Email"]:</th>
+                <td>@Model.users.FirstOrDefault().Email</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["PhoneNumber"]:</th>
+                <td>@Model.users.FirstOrDefault().Phone</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Additionalinfo"]:</th>
+                <td>@Model.users.FirstOrDefault().AdditionalInfo</td>
+            </tr>
+        </table>
+        <label style="text-align:center; font-size:16px">@SharedLocalizer["Representative"]</label>
+        <table style="width:100%">
+            <tr>
+                <th>@SharedLocalizer["Name"]:</th>
+                <td>@Model.users.FirstOrDefault().Name</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Surname"]:</th>
+                <td>@Model.users.FirstOrDefault().Surname</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["PersonalNumber"]:</th>
+                <td>@Model.users.FirstOrDefault().PersonalCode</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["PhoneNumber"]:</th>
+                <td>@Model.users.FirstOrDefault().Phone1</td>
+            </tr>
+        </table>
+
+    </div>
+}
+else
+{
+    <div class="individual">
+        <label style="text-align:center; font-size:16px">@SharedLocalizer["Individual"]</label>
+        <table style="width:100%">
+            <tr>
+                <th>@SharedLocalizer["Name"]:</th>
+                <td>@Model.users.FirstOrDefault().Name</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Surname"]:</th>
+                <td>@Model.users.FirstOrDefault().Surname</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["PersonalNumber"]:</th>
+                <td>@Model.users.FirstOrDefault().PersonalCode</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["PhoneNumber"]:</th>
+                <td>@Model.users.FirstOrDefault().Phone</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["Email"]:</th>
+                <td>@Model.users.FirstOrDefault().Email</td>
+            </tr>
+            <tr>
+                <th>@SharedLocalizer["DatOfBirth"]:</th>
+                <td>@Model.users.FirstOrDefault().BDate</td>
+            </tr>
+
+        </table>
+
+    </div>
+}
+<div style="margin-top:10px">
+    <button data-toggle="modal" data-target="#calcusdt">@SharedLocalizer["NewPayment"]</button>
+</div>
+<div style="margin-top:10px" class="operations" id="operations">
+    <table style="width:100%">
+        <tr>
+            <th style="text-align:left; border: 1px solid; padding:6px">@SharedLocalizer["Amount"]</th>
+            <th style="text-align:left; border: 1px solid; padding:6px">@SharedLocalizer["DateCreated"]</th>
+            <th style="text-align:left; border: 1px solid; padding:6px">@SharedLocalizer["Status"]</th>
+            <th style="text-align:left; border: 1px solid; padding:6px"></th>
+        </tr>
+
+        @foreach (var a in Model.transactions)
+        {
+            <tr>
+                <td style="text-align:left; border: 1px solid; padding:6px">@a.ConvertedAmount</td>
+                <td style="text-align:left; border: 1px solid; padding:6px">@a.OperationDate</td>
+                <td style="text-align:left; border: 1px solid; padding:6px">@a.StatusName</td>
+                @if (a.Status == 5)
+                {
+                    <td style="text-align:left; border: 1px solid; padding:6px">
+                        <button data-opid=@a.OperationID style="border:none; background:none" class="getcode" id="getcode"><u>@SharedLocalizer["GetCode"]</u></button>
+                    </td>
+                }
+                @if (a.Status == 0)
+                {
+                    <td style="text-align:left; border: 1px solid; padding:6px">
+                        <button data-printamount=@a.ConvertedAmount data-printdate=@a.OperationDate class="cashdeskorderforvoucher" style="border:none; background:none" id="cashdeskorderforvoucher"><u>@SharedLocalizer["IncomeReceipt"]</u></button>
+                    </td>
+                }
+
+            </tr>
+        }
+
+
+    </table>
+</div>
+
+<div class="modal fade" id="cashdeskorder" tabindex="-1" role="dialog" aria-labelledby="cashdeskorder" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="regcontent" style="width: 730px">
+            <div class="modal-body">
+                <partial name="~/Views/Print/_IncomeReceipt.cshtml" model="@Model" />
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="qrprint" tabindex="-1" role="dialog" aria-labelledby="qrprint" aria-hidden="true">
+    <div id="modaldialog" class="modal-dialog" role="document">
+
+        <div data-backdrop="static" class="modal-content" id="qrprintform" style="width: 730px">
+            <div class="modal-body">
+                <partial name="~/Views/Print/QR.cshtml" />
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="calcusdt" tabindex="-1" role="dialog" aria-labelledby="calcusdt" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" style="float:right" class="btn btn-secondary" data-dismiss="modal">X</button>
+                <div style="display:flex; flex-direction:column; margin-top:10px">
+                    <label>USDT</label>
+                    <input type="number" id="clacusdt" />
+
+                    <label>@SharedLocalizer["Amount"]</label>
+                    <input type="number" id="calcamount" />
+
+                    <div id="fees" style="display:none">
+                        <div style="display:flex; flex-direction:column">
+                            <label>@SharedLocalizer["FeePercent"]</label>
+                            <input readonly type="number" id="feepercent" />
+
+                            <label>@SharedLocalizer["Fee"]</label>
+                            <input readonly type="number" id="feeamount" />
+
+                            <label>@SharedLocalizer["Rate"]</label>
+                            <input readonly type="number" id="rate" />
+                        </div>
+                    </div>
+                </div>
+
+                <button style="float: right; width:110px; margin-right: 35px; margin-top: 5px;" id="buy">@SharedLocalizer["Confirm"]</button>
+                <button style="margin-top:5px; width:110px; float:right; margin-right:35px; margin-bottom: 20px" class="btn hide" id="buypending">...</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.js"></script>
+<script src="~/lib/Swal/dist/sweetalert2.js"></script>
+<script src="~/lib/Buttons/table-datatables-buttons.js"></script>
+<script type="text/javascript" src="CountryCodes.js"></script>
+<script>
+    function printqr() {
+
+        document.getElementById('printqr').style.display = 'none';
+
+
+        var printContents = document.getElementById('qrprintform').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            document.getElementById('printqr').style.display = 'block';
+
+
+        }, 1000)
+    }
+
+    $(".cashdeskorderforvoucher").click(function () {
+        $('#pamount').text($(this).data("printamount"));
+        $('#pamount1').text($(this).data("printamount"));
+        $('#pcreatedate1').text($(this).data("printdate"));
+        $('#pcreatedate').text($(this).data("printdate"));
+        $('#cashdeskorder').modal('show');
+    })
+
+    $(document).ready(function () {
+        $("#clacusdt").keyup(function () {
+            setTimeout(get_search_results, 1000);
+        });
+
+        function get_search_results(event) {
+            var usdt = $('#clacusdt').val();
+            var url = '@Url.Action("CalcUsdt", "CashDesk")';
+            $.ajax({
+                type: "GET",
+                url: url,
+
+                data: {
+                    usdt: usdt
+
+                },
+                cache: false,
+                success: function (data) {
+                    document.getElementById('fees').style.display = 'block'
+                    if (document.getElementById('calcamount')) {
+                        document.getElementById('calcamount').value = data.amount;
+                        $("#calcamount").attr("value", data.amount)
+                    }
+                    if (document.getElementById('feepercent')) {
+                        document.getElementById('feepercent').value = data.feePersent;
+                        $("#feepercent").attr("value", data.feePersent)
+                    }
+                    if (document.getElementById('feeamount')) {
+                        document.getElementById('feeamount').value = data.feeAmount;
+                        $("#feeamount").attr("value", data.feeAmount)
+                    }
+                    if (document.getElementById('rate')) {
+                        document.getElementById('rate').value = data.rate;
+                        $("#rate").attr("value", data.rate)
+                    }
+
+                }
+            });
+
+        }
+    });
+
+    $(document).ready(function () {
+        $("#calcamount").keyup(function () {
+            setTimeout(get_search_results, 1000);
+        });
+
+        function get_search_results(event) {
+            var amount = $('#calcamount').val();
+            var url = '@Url.Action("CalcUsdt", "CashDesk")';
+            $.ajax({
+                type: "GET",
+                url: url,
+
+                data: {
+                    Amount: amount
+
+                },
+                cache: false,
+                success: function (data) {
+                    document.getElementById('fees').style.display = 'block'
+                    if (document.getElementById('clacusdt')) {
+                        document.getElementById('clacusdt').value = data.usdt;
+                        $("#clacusdt").attr("value", data.usdt)
+                    }
+                    if (document.getElementById('feepercent')) {
+                        document.getElementById('feepercent').value = data.feePersent;
+                        $("#feepercent").attr("value", data.feePersent)
+                    }
+                    if (document.getElementById('feeamount')) {
+                        document.getElementById('feeamount').value = data.feeAmount;
+                        $("#feeamount").attr("value", data.feeAmount)
+                    }
+                    if (document.getElementById('rate')) {
+                        document.getElementById('rate').value = data.rate;
+                        $("#rate").attr("value", data.rate)
+                    }
+
+                }
+            });
+
+        }
+    });
+
+    $(".getcode").click(function () {
+        var id = $(this).data("opid")
+        var url = '@Url.Action("GetCode", "CashDesk")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            async: false,
+
+            data: {
+                "OperationID": $(this).data("opid")
+
+            },
+            cache: false,
+            success: function (data) {
+                console.log(data)
+
+                if (data.code != null) {
+                    $('#pcreatedate').text($(this).data("printdate"));
+                    $('#qrprint').modal('show');
+                    console.log(data.base64)
+                    document.getElementById("qr-code").src = "data:image/png;base64," + data.base64
+                    $('#qr-id').text( id);
+                    $('#code').text(data.code);
+                    $('#qr-date').text(data.formatedDate);
+                    $('#qr-usdt').text(data.usdt + " USDT");
+                }
+                else {
+                    alert(data.actionResultMsg)
+
+                }
+            },
+
+        });
+
+
+    })
+
+    $("#buy").click(function () {
+        if ($('#clacusdt').val() == null || $('#clacusdt').val() == "") {
+
+            document.getElementById('clacusdt').style.borderColor = 'red';
+        }
+        else {
+
+            $('#buypending').removeClass('hide');
+            $('#buy').addClass('hide');
+            setTimeout(() => {
+                var url = '@Url.Action("BuyNewUsdt", "CashDesk")';
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    async: false,
+
+                    data: {
+                        "ClientID": $('#client').val(),
+                        "Amount": $('#calcamount').val(),
+                        "FeeAmount": $('#feeamount').val(),
+                        "Usdt": $('#clacusdt').val(),
+
+                    },
+                    cache: false,
+                    success: function (data) {
+
+                        $('#buypending').addClass('hide');
+                        $('#buy').removeClass('hide');
+                        if (data.actionResultCode == 200) {
+
+                            $('#buypending').addClass('hide');
+                            $('#buy').removeClass('hide');
+                            alert(data.actionResultMsg)
+                            window.location.reload()
+                        }
+                        else {
+                            alert(data.actionResultMsg)
+                            $('#buypending').addClass('hide');
+                            $('#buy').removeClass('hide');
+                        }
+                    },
+
+                });
+            }, 500)
+        }
+    })
+    function printcashdeskorder() {
+
+        document.getElementById('printcashdeskorderbtn').style.display = 'none';
+
+        var printContents = document.getElementById('cashdeskorder').innerHTML;
+
+        var ht = document.body.childNodes;
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'none';
+        }
+        var z = document.createElement('p'); // is a node
+        z.setAttribute('id', 'prindDom');
+        z.innerHTML = printContents;
+        document.body.appendChild(z)
+        window.print();
+        for (var c = 0; c < ht.length; c++) {
+            console.log(ht[c])
+            if (ht[c].style) ht[c].style.display = 'inherit';
+        }
+        document.getElementById('prindDom').remove();
+        setTimeout(() => {
+
+            document.getElementById('printcashdeskorderbtn').style.display = 'block';
+
+
+
+        }, 1000)
+    }
+</script>
